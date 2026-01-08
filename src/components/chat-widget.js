@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from "react"
+import Header from "./header"
+import Avatar from "./avatar"
 import "./chat-widget.css"
 
 const ChatWidget = () => {
@@ -7,7 +9,37 @@ const ChatWidget = () => {
         { id: 1, text: "Hello! How can I help you today?", sender: "support" },
     ])
     const [inputValue, setInputValue] = useState("")
+    const [thought, setThought] = useState("Need help?")
+    const [isBubbleVisible, setIsBubbleVisible] = useState(false)
     const messagesEndRef = useRef(null)
+
+    const thoughts = [
+        "Need help?",
+        "Check this out!",
+        "I'm here!",
+        "Want to chat?",
+        "Got questions?",
+    ]
+
+    useEffect(() => {
+        let thoughtInterval
+        if (!isOpen) {
+            // Proactive thought bubbles when closed
+            thoughtInterval = setInterval(() => {
+                const randomThought = thoughts[Math.floor(Math.random() * thoughts.length)]
+                setThought(randomThought)
+                setIsBubbleVisible(true)
+
+                setTimeout(() => {
+                    setIsBubbleVisible(false)
+                }, 3000)
+            }, 8000)
+        } else {
+            setIsBubbleVisible(false)
+        }
+
+        return () => clearInterval(thoughtInterval)
+    }, [isOpen])
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -93,17 +125,20 @@ const ChatWidget = () => {
                 </form>
             </div>
 
-            <button className="chat-toggle-button" onClick={handleToggle} aria-label="Open chat">
-                {isOpen ? (
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
-                ) : (
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                )}
-            </button>
+            <div className="chat-toggle-wrapper" onClick={handleToggle}>
+                {!isOpen && <Avatar thought={thought} isBubbleVisible={isBubbleVisible} />}
+                <button className="chat-toggle-button" aria-label="Open chat">
+                    {isOpen ? (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    ) : (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                    )}
+                </button>
+            </div>
         </div>
     )
 }
