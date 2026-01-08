@@ -1,0 +1,8 @@
+name: sample-gatsby
+static_sites:
+- environment_slug: gatsby
+  github:
+    branch: main
+    deploy_on_push: true
+    repo: digitalocean/sample-gatsby
+  name: sample-gatsby
