@@ -14,11 +14,11 @@ const ChatWidget = () => {
     const messagesEndRef = useRef(null)
 
     const thoughts = [
-        "Need help?",
-        "Check this out!",
-        "I'm here!",
-        "Want to chat?",
-        "Got questions?",
+        "Need help in your design thinking process?",
+        "Check this out - ask me anything design thinking related!",
+        "I'm here for your team!",
+        "Lean startup ?",
+        "MVP (minimum vaiable product)?",
     ]
 
     useEffect(() => {
