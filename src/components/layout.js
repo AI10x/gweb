@@ -11,6 +11,7 @@ import { useStaticQuery, graphql } from "gatsby"
 
 import Header from "./header"
 import ChatWidget from "./chat-widget"
+import BackgroundVideo from "./video-background"
 import "./layout.css"
 
 const Layout = ({ children }) => {
@@ -24,22 +25,29 @@ const Layout = ({ children }) => {
     }
   `)
 
+  // Minimal mode as requested: hide everything except video, chat, and avatar
+  const isMinimalMode = true
+
   return (
     <>
-      <Header siteTitle={data.site.siteMetadata.title} />
+      <BackgroundVideo />
+      {!isMinimalMode && <Header siteTitle={data.site.siteMetadata.title} />}
       <div
         style={{
           margin: `0 auto`,
           maxWidth: 960,
           padding: `0 1.0875rem 1.45rem`,
+          display: isMinimalMode ? 'none' : 'block'
         }}
       >
         <main>{children}</main>
-        <footer>
-          © {new Date().getFullYear()}, Built with
-          {` `}
-          <a href="https://www.gatsbyjs.org">Gatsby</a>
-        </footer>
+        {!isMinimalMode && (
+          <footer>
+            © {new Date().getFullYear()}, Built with
+            {` `}
+            <a href="https://www.gatsbyjs.org">Gatsby</a>
+          </footer>
+        )}
       </div>
       <ChatWidget />
     </>
