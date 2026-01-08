@@ -17,7 +17,7 @@ const ChatWidget = () => {
         "Need help in your design thinking process?",
         "Check this out - ask me anything design thinking related!",
         "I'm here for your team!",
-        "Lean startup ?",
+        "Lean startup?",
         "MVP (minimum vaiable product)?",
     ]
 
