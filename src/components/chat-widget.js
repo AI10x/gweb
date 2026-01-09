@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react"
 import Header from "./header"
 import Avatar from "./avatar"
 import "./chat-widget.css"
+import { fetchGroqCompletion } from "../services/groq"
 
 const ChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false)
@@ -11,6 +12,7 @@ const ChatWidget = () => {
     const [inputValue, setInputValue] = useState("")
     const [thought, setThought] = useState("Need help?")
     const [isBubbleVisible, setIsBubbleVisible] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const messagesEndRef = useRef(null)
 
     const thoughts = [
@@ -53,30 +55,49 @@ const ChatWidget = () => {
 
     const handleToggle = () => setIsOpen(!isOpen)
 
-    const handleSend = (e) => {
+    const handleSend = async (e) => {
         e.preventDefault()
         if (!inputValue.trim()) return
 
-        const newMessage = {
+        const userMessage = {
             id: Date.now(),
             text: inputValue,
             sender: "user",
         }
 
-        setMessages([...messages, newMessage])
+        const newMessages = [...messages, userMessage]
+        setMessages(newMessages)
         setInputValue("")
+        setIsLoading(true)
 
-        // Mock response
-        setTimeout(() => {
+        try {
+            const apiMessages = newMessages.map((msg) => ({
+                role: msg.sender === "user" ? "user" : "assistant",
+                content: msg.text,
+            }))
+
+            const response = await fetchGroqCompletion(apiMessages)
+
+            const assistantMessage = {
+                id: Date.now() + 1,
+                text: response.content,
+                sender: "support",
+            }
+
+            setMessages((prev) => [...prev, assistantMessage])
+        } catch (error) {
+            console.error("Error getting response:", error)
             setMessages((prev) => [
                 ...prev,
                 {
                     id: Date.now() + 1,
-                    text: "Thanks for reaching out! Our team will get back to you soon.",
+                    text: "Sorry, I'm having trouble connecting right now.",
                     sender: "support",
                 },
             ])
-        }, 1000)
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (
