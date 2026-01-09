@@ -126,6 +126,11 @@ const ChatWidget = () => {
                             {msg.text}
                         </div>
                     ))}
+                    {isLoading && (
+                        <div className="message message-received">
+                            <span className="typing-indicator">...</span>
+                        </div>
+                    )}
                     <div ref={messagesEndRef} />
                 </div>
 
@@ -136,8 +141,9 @@ const ChatWidget = () => {
                         placeholder="Type a message..."
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
+                        disabled={isLoading}
                     />
-                    <button type="submit" className="send-button">
+                    <button type="submit" className="send-button" disabled={isLoading}>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '1.2rem', height: '1.2rem' }}>
                             <line x1="22" y1="2" x2="11" y2="13"></line>
                             <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
