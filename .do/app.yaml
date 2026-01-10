@@ -1,8 +1,15 @@
-name: sample-gatsby
+name: gweb
 static_sites:
 - environment_slug: gatsby
   github:
     branch: main
     deploy_on_push: true
-    repo: digitalocean/sample-gatsby
+    repo: AI10x/gweb
   name: sample-gatsby
+  envs:
+  - key: GATSBY_GROQ_API_KEY
+    scope: RUN_AND_BUILD_TIME
+    type: GENERAL
+  - key: GROQ_API_KEY
+    scope: RUN_AND_BUILD_TIME
+    type: GENERAL
