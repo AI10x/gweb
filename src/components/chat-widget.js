@@ -5,6 +5,7 @@ import Header from "./header"
 import Avatar from "./avatar"
 import "./chat-widget.css"
 import { fetchGroqCompletion } from "../services/groq"
+import AI10xIcon from "../images/ai10x-icon.png"
 
 const ChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false)
@@ -181,6 +182,9 @@ const ChatWidget = () => {
                             className={`message ${msg.sender === "user" ? "message-sent" : "message-received"
                                 }`}
                         >
+                            {msg.sender === "support" && (
+                                <img src={AI10xIcon} alt="AI10x" className="message-avatar" />
+                            )}
                             <div className="message-content">
                                 <ReactMarkdown>{msg.text}</ReactMarkdown>
                             </div>

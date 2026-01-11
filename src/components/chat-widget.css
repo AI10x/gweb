@@ -163,6 +163,17 @@
     background: var(--pre-bg);
     color: var(--text-color);
     border-bottom-left-radius: 0.25rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.message-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 2px;
 }
 
 .message-sent {
