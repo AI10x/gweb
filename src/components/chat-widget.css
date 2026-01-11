@@ -44,8 +44,10 @@
 }
 
 .chat-window {
-    width: 350px;
-    height: 500px;
+    width: 450px;
+    max-width: 90vw;
+    height: 600px;
+    max-height: 80vh;
     background: rgba(var(--bg-rgb, 255, 255, 255), 0.7);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
