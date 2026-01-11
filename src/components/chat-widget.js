@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react"
 import { jsPDF } from "jspdf"
+import ReactMarkdown from "react-markdown"
 import Header from "./header"
 import Avatar from "./avatar"
 import "./chat-widget.css"
@@ -180,7 +181,9 @@ const ChatWidget = () => {
                             className={`message ${msg.sender === "user" ? "message-sent" : "message-received"
                                 }`}
                         >
-                            <div className="message-content">{msg.text}</div>
+                            <div className="message-content">
+                                <ReactMarkdown>{msg.text}</ReactMarkdown>
+                            </div>
                             <button
                                 className={`copy-button ${copiedId === msg.id ? "copied" : ""}`}
                                 onClick={() => handleCopy(msg.text, msg.id)}
