@@ -18,7 +18,7 @@ export const fetchGroqCompletion = async (messages, systemPrompt) => {
 
         const completion = await client.chat.completions.create({
             messages: apiMessages,
-            model: "llama-3.3-70b-versatile",
+            model: "openai/gpt-oss-120B",
         })
 
         return completion.choices[0].message
