@@ -10,11 +10,15 @@ const client = new OpenAI({
     dangerouslyAllowBrowser: true,
 })
 
-export const fetchGroqCompletion = async (messages) => {
+export const fetchGroqCompletion = async (messages, systemPrompt) => {
     try {
+        const apiMessages = systemPrompt
+            ? [{ role: "system", content: systemPrompt }, ...messages]
+            : messages
+
         const completion = await client.chat.completions.create({
-            messages: messages,
-            model: "openai/gpt-oss-20B",
+            messages: apiMessages,
+            model: "llama-3.3-70b-versatile",
         })
 
         return completion.choices[0].message
