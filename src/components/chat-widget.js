@@ -13,6 +13,7 @@ const ChatWidget = () => {
     const [thought, setThought] = useState("Need help?")
     const [isBubbleVisible, setIsBubbleVisible] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
+    const [copiedId, setCopiedId] = useState(null)
     const messagesEndRef = useRef(null)
 
     const thoughts = [
@@ -100,6 +101,15 @@ const ChatWidget = () => {
         }
     }
 
+    const handleCopy = (text, id) => {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(() => {
+                setCopiedId(id)
+                setTimeout(() => setCopiedId(null), 2000)
+            })
+        }
+    }
+
     return (
         <div className="chat-widget-container">
             <div className={`chat-window ${isOpen ? "" : "closed"}`}>
@@ -123,7 +133,23 @@ const ChatWidget = () => {
                             className={`message ${msg.sender === "user" ? "message-sent" : "message-received"
                                 }`}
                         >
-                            {msg.text}
+                            <div className="message-content">{msg.text}</div>
+                            <button
+                                className={`copy-button ${copiedId === msg.id ? "copied" : ""}`}
+                                onClick={() => handleCopy(msg.text, msg.id)}
+                                title="Copy message"
+                            >
+                                {copiedId === msg.id ? (
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="copy-icon">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                ) : (
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="copy-icon">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                )}
+                            </button>
                         </div>
                     ))}
                     {isLoading && (
