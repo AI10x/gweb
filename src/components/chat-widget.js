@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react"
+import { jsPDF } from "jspdf"
 import Header from "./header"
 import Avatar from "./avatar"
 import "./chat-widget.css"
@@ -101,6 +102,43 @@ const ChatWidget = () => {
         }
     }
 
+    const handleDownloadPDF = () => {
+        const doc = new jsPDF()
+        let yPos = 20
+
+        doc.setFontSize(16)
+        doc.text("Chat Conversation History", 20, yPos)
+        yPos += 15
+
+        doc.setFontSize(10)
+        doc.setTextColor(100)
+        doc.text(`Generated on: ${new Date().toLocaleString()}`, 20, yPos)
+        yPos += 15
+
+        messages.forEach((msg) => {
+            const sender = msg.sender === "user" ? "You" : "Assistant"
+            const text = msg.text
+
+            doc.setFontSize(11)
+            doc.setTextColor(0)
+            doc.setFont("helvetica", "bold")
+            doc.text(`${sender}:`, 20, yPos)
+            yPos += 7
+
+            doc.setFont("helvetica", "normal")
+            const splitText = doc.splitTextToSize(text, 170)
+            doc.text(splitText, 25, yPos)
+            yPos += (splitText.length * 6) + 5
+
+            if (yPos > 270) {
+                doc.addPage()
+                yPos = 20
+            }
+        })
+
+        doc.save("chat-history.pdf")
+    }
+
     const handleCopy = (text, id) => {
         if (navigator.clipboard) {
             navigator.clipboard.writeText(text).then(() => {
@@ -118,12 +156,21 @@ const ChatWidget = () => {
                         <span className="chat-header-title">Premium Support</span>
                         <span className="chat-header-status">Online</span>
                     </div>
-                    <button onClick={handleToggle} className="send-button" style={{ color: 'white' }}>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '1.2rem', height: '1.2rem' }}>
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                    </button>
+                    <div className="chat-header-actions">
+                        <button onClick={handleDownloadPDF} className="header-action-button" title="Download PDF">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '1.2rem', height: '1.2rem' }}>
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                        </button>
+                        <button onClick={handleToggle} className="header-action-button" title="Close chat">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '1.2rem', height: '1.2rem' }}>
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <div className="chat-messages">

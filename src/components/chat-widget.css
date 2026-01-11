@@ -87,6 +87,30 @@
     font-size: 1rem;
 }
 
+.chat-header-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.header-action-button {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+    transition: transform 0.2s, opacity 0.2s;
+    opacity: 0.8;
+}
+
+.header-action-button:hover {
+    transform: scale(1.1);
+    opacity: 1;
+}
+
 .chat-header-status {
     font-size: 0.75rem;
     opacity: 0.9;
