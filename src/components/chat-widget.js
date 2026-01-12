@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react"
 import { jsPDF } from "jspdf"
+import html2canvas from "html2canvas"
 import ReactMarkdown from "react-markdown"
+import MermaidDiagram from "./mermaid-diagram"
 import Header from "./header"
 import Avatar from "./avatar"
 import "./chat-widget.css"
@@ -129,7 +131,7 @@ const ChatWidget = () => {
         }
     }
 
-    const handleDownloadPDF = () => {
+    const handleDownloadPDF = async () => {
         const doc = new jsPDF()
         const pageWidth = doc.internal.pageSize.width
         const pageHeight = doc.internal.pageSize.height
@@ -157,11 +159,12 @@ const ChatWidget = () => {
         doc.setDrawColor(200)
         doc.line(margin, yPos, pageWidth - margin, yPos)
         yPos += 15
+        // Get all message elements from DOM to find diagrams
+        const messageElements = document.querySelectorAll('.message')
 
-        messages.forEach((msg) => {
+        for (let i = 0; i < messages.length; i++) {
+            const msg = messages[i]
             const sender = msg.sender === "user" ? "ENTREPRENEUR" : "STRATEGIST (AI10xTech)"
-            // Simple markdown cleaning (removing backticks and excessive asterisks)
-            const cleanText = msg.text.replace(/[*_#]/g, '').replace(/`/g, '')
 
             // Check for space for sender name
             if (yPos > pageHeight - 30) {
@@ -174,6 +177,40 @@ const ChatWidget = () => {
             doc.setFont("helvetica", "bold")
             doc.text(`${sender}:`, margin, yPos)
             yPos += 7
+            // Check if this message has a mermaid diagram
+            const hasMermaid = msg.text.includes('```mermaid')
+
+            if (hasMermaid && messageElements[i]) {
+                const diagramContainer = messageElements[i].querySelector('.mermaid-container')
+                if (diagramContainer) {
+                    try {
+                        const canvas = await html2canvas(diagramContainer, {
+                            scale: 2,
+                            logging: false,
+                            useCORS: true
+                        })
+                        const imgData = canvas.toDataURL('image/png')
+                        const imgWidth = pageWidth - (margin * 2)
+                        const imgHeight = (canvas.height * imgWidth) / canvas.width
+
+                        if (yPos + imgHeight > pageHeight - 15) {
+                            doc.addPage()
+                            yPos = 25
+                        }
+
+                        doc.addImage(imgData, 'PNG', margin, yPos, imgWidth, imgHeight)
+                        yPos += imgHeight + 10
+                    } catch (e) {
+                        console.error("Failed to capture mermaid diagram:", e)
+                    }
+                }
+            }
+
+            // Also render the text (cleaning markdown except diagrams)
+            const cleanText = msg.text
+                .replace(/```mermaid[\s\S]*?```/g, '[Flowchart rendered above]')
+                .replace(/[*_#]/g, '')
+                .replace(/`/g, '')
 
             doc.setFontSize(10)
             doc.setTextColor(30)
@@ -191,7 +228,7 @@ const ChatWidget = () => {
             })
 
             yPos += 8 // Spacing between messages
-        })
+        }
 
         doc.save("ai10x-strategy-report.pdf")
     }
@@ -241,7 +278,23 @@ const ChatWidget = () => {
                                 <img src={AI10xIcon} alt="AI10x" className="message-avatar" />
                             )}
                             <div className="message-content">
-                                <ReactMarkdown>{msg.text}</ReactMarkdown>
+                                <ReactMarkdown
+                                    components={{
+                                        code({ node, inline, className, children, ...props }) {
+                                            const match = /language-(\w+)/.exec(className || "")
+                                            const isMermaid = match && match[1] === "mermaid"
+                                            return !inline && isMermaid ? (
+                                                <MermaidDiagram chart={String(children).replace(/\n$/, "")} />
+                                            ) : (
+                                                <code className={className} {...props}>
+                                                    {children}
+                                                </code>
+                                            )
+                                        },
+                                    }}
+                                >
+                                    {msg.text}
+                                </ReactMarkdown>
                             </div>
                             <button
                                 className={`copy-button ${copiedId === msg.id ? "copied" : ""}`}
