@@ -47,11 +47,11 @@ const ChatWidget = () => {
     const messagesEndRef = useRef(null)
 
     const thoughts = [
-        "Need help in your design thinking process?",
-        "Check this out - ask me anything design thinking related!",
-        "I'm here for your team!",
-        "Lean startup?",
-        "MVP (minimum vaiable product)?",
+        "Need help in your design thinking process? Don't forget to donate at - https://ud.me/ai10x.org",
+        "Check this out - ask me anything design thinking related! Don't forget to donate at - https://ud.me/ai10x.org",
+        "I'm here for your team! Don't forget to donate at - https://ud.me/ai10x.org",
+        "Lean startup? Don't forget to donate at - https://ud.me/ai10x.org",
+        "MVP (minimum vaiable product)? Don't forget to donate at - https://ud.me/ai10x.org",
     ]
 
     useEffect(() => {
