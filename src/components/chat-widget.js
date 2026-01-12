@@ -210,7 +210,7 @@ const ChatWidget = () => {
                 }
             }
 
-            // Message Content
+            // Message Content Styling (Subtle Cursive Feel)
             const cleanText = msg.text
                 .replace(/```mermaid[\s\S]*?```/g, '[Visual Flowchart Included]')
                 .replace(/[*_#]/g, '')
@@ -218,10 +218,12 @@ const ChatWidget = () => {
 
             doc.setFontSize(8)
             doc.setTextColor(30)
-            doc.setFont("helvetica", "normal")
+            doc.setFont("times", "italic")
 
-            const otherLineMax = pageWidth - (margin * 2) - 10
-            const splitText = doc.splitTextToSize(cleanText, otherLineMax)
+            // Inline and Indentation Logic
+            const contentIndent = senderWidth
+            const contentWidth = pageWidth - (margin * 2) - contentIndent - 5
+            const splitText = doc.splitTextToSize(cleanText, contentWidth)
 
             splitText.forEach((line, index) => {
                 if (yPos > pageHeight - 15) {
@@ -229,17 +231,12 @@ const ChatWidget = () => {
                     yPos = 20
                 }
 
-                if (index === 0 && !hasMermaid) {
-                    doc.text(line, margin + senderWidth, yPos)
-                    yPos += 5
-                } else {
-                    if (index === 0 && hasMermaid) yPos += 5
-                    doc.text(line, margin + 5, yPos)
-                    yPos += 5
-                }
+                // Indent everything to the right of the sender label for a structured 'inline' look
+                doc.text(line, margin + contentIndent, yPos)
+                yPos += 4.5 // Tighter spacing
             })
 
-            yPos += 6 // Spacing between messages
+            yPos += 5 // Spacing between messages
         }
 
         doc.save("ai10x-strategy-report.pdf")
