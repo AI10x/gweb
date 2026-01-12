@@ -32,7 +32,7 @@ When a user provides their canvas data, evaluate it based on the following:
 4. **The "Stress Test":** 3-5 challenging questions the founder must answer.
 5. **Next Steps:** Actionable experiments to validate the model.
 6. **Final Thoughts:** A final note of encouragement and next steps.
-7. Additionally, explain the process using the Lean Canvas framework; and provide graphs and tables in ASIC text and mermaid code.
+7. Additionally, explain the process using the Lean Canvas framework; and provide graphs and tables in ASCII text and mermaid code.
 **Tone:** Professional, objective, encouraging, and highly analytical.`
 const ChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false)
@@ -136,7 +136,9 @@ const ChatWidget = () => {
         const doc = new jsPDF('p', 'mm', 'a3')
         const pageWidth = doc.internal.pageSize.width
         const pageHeight = doc.internal.pageSize.height
-        const margin = 25 // Slightly larger margin for A3
+        const margin = 25
+        const rightGap = 50 // Large gap on the right
+        const contentIndent = 10 // Content indented from sender
         let yPos = 25
 
         // Header
@@ -159,7 +161,7 @@ const ChatWidget = () => {
         yPos += 4
         doc.setDrawColor(220)
         doc.line(margin, yPos, pageWidth - margin, yPos)
-        yPos += 10
+        yPos += 15
 
         // Get all message elements from DOM to find diagrams
         const messageElements = document.querySelectorAll('.message')
@@ -169,23 +171,24 @@ const ChatWidget = () => {
             const senderLabel = msg.sender === "user" ? "ENTREPRENEUR" : "AI10x STRATEGIST"
 
             // Check for space
-            if (yPos > pageHeight - 20) {
+            if (yPos > pageHeight - 30) {
                 doc.addPage()
-                yPos = 20
+                yPos = 30
             }
 
-            // Sender Label
+            // Sender Label (Always at the far left margin)
             doc.setFontSize(10)
             doc.setTextColor(msg.sender === "user" ? 60 : 0, 70, 150)
             doc.setFont("helvetica", "bold")
             doc.text(`${senderLabel}:`, margin, yPos)
-            yPos += 6
+            yPos += 8
 
             // Segmented Rendering for better formatting (Text, Mermaid, ASCII/Code)
             const mermaidContainers = Array.from(messageElements[i]?.querySelectorAll('.mermaid-container') || [])
             let mermaidIdx = 0
 
             const segments = msg.text.split(/(```[\s\S]*?```)/g)
+            const restrictedWidth = pageWidth - margin - rightGap - contentIndent
 
             for (const segment of segments) {
                 if (!segment || !segment.trim()) continue
@@ -200,22 +203,22 @@ const ChatWidget = () => {
                                 useCORS: true
                             })
                             const imgData = canvas.toDataURL('image/png')
-                            const imgWidth = pageWidth - (margin * 2)
+                            const imgWidth = restrictedWidth
                             const imgHeight = (canvas.height * imgWidth) / canvas.width
 
-                            if (yPos + imgHeight > pageHeight - 15) {
+                            if (yPos + imgHeight > pageHeight - 20) {
                                 doc.addPage()
-                                yPos = 25
+                                yPos = 30
                             }
 
-                            doc.addImage(imgData, 'PNG', margin, yPos, imgWidth, imgHeight)
-                            yPos += imgHeight + 6
+                            doc.addImage(imgData, 'PNG', margin + contentIndent, yPos, imgWidth, imgHeight)
+                            yPos += imgHeight + 8
                         } catch (e) {
                             console.error("PDF: Mermaid capture failed", e)
                         }
                     } else {
                         doc.setFont("helvetica", "italic").setFontSize(9).setTextColor(100)
-                        doc.text("[Diagram Rendering...]", margin, yPos)
+                        doc.text("[Diagram Rendering...]", margin + contentIndent, yPos)
                         yPos += 6
                     }
                 } else if (segment.startsWith('```')) {
@@ -223,38 +226,37 @@ const ChatWidget = () => {
                     const code = segment.replace(/```\w*\n?/, '').replace(/```$/, '')
                     doc.setFont("courier", "normal").setFontSize(9).setTextColor(30)
 
-                    // Split code by newlines to preserve indentation, then split long lines
                     const rawLines = code.split('\n')
                     rawLines.forEach(rawLine => {
-                        const splitLines = doc.splitTextToSize(rawLine, pageWidth - (margin * 2))
+                        const splitLines = doc.splitTextToSize(rawLine, restrictedWidth)
                         splitLines.forEach(line => {
                             if (yPos > pageHeight - 15) {
                                 doc.addPage()
-                                yPos = 25
+                                yPos = 30
                             }
-                            doc.text(line, margin, yPos)
-                            yPos += 5 // Tighter height for code
+                            doc.text(line, margin + contentIndent, yPos)
+                            yPos += 5
                         })
                     })
-                    yPos += 2 // Gap after block
+                    yPos += 4
                 } else {
                     // Standard Markdown Text
                     const cleanText = segment.replace(/[*_#]/g, '').replace(/`/g, '')
                     doc.setFont("helvetica", "normal").setFontSize(10).setTextColor(30)
 
-                    const splitText = doc.splitTextToSize(cleanText, pageWidth - (margin * 2))
+                    const splitText = doc.splitTextToSize(cleanText, restrictedWidth)
                     splitText.forEach((line) => {
                         if (yPos > pageHeight - 15) {
                             doc.addPage()
-                            yPos = 25
+                            yPos = 30
                         }
-                        doc.text(line, margin, yPos)
+                        doc.text(line, margin + contentIndent, yPos)
                         yPos += 6
                     })
                 }
             }
 
-            yPos += 4 // Spacing between messages
+            yPos += 6 // Spacing between messages
         }
 
         doc.save("ai10x-strategy-report.pdf")
