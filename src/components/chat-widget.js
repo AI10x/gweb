@@ -136,29 +136,29 @@ const ChatWidget = () => {
         const doc = new jsPDF('p', 'mm', 'a3')
         const pageWidth = doc.internal.pageSize.width
         const pageHeight = doc.internal.pageSize.height
-        const margin = 25
-        const rightGap = 50 // Large gap on the right
-        const contentIndent = 10 // Content indented from sender
-        let yPos = 25
+        const margin = 10 // Minimal left margin for "no gap" look
+        const rightGap = 80 // Massive breathable gap on the right
+        const contentIndent = 0 // No internal indentation
+        let yPos = 20
 
-        // Header
-        doc.setFontSize(18)
+        // Header (Alinged to left margin)
+        doc.setFontSize(22)
         doc.setTextColor(40, 44, 52)
         doc.setFont("helvetica", "bold")
         doc.text("AI10xTech", margin, yPos)
 
-        yPos += 8
-        doc.setFontSize(12)
+        yPos += 10
+        doc.setFontSize(14)
         doc.setFont("helvetica", "normal")
         doc.text("Lean Startup Strategy Report", margin, yPos)
 
-        yPos += 7
-        doc.setFontSize(8)
+        yPos += 8
+        doc.setFontSize(9)
         doc.setTextColor(120)
         doc.text(`Generated: ${new Date().toLocaleString()}`, margin, yPos)
 
         // Divider
-        yPos += 4
+        yPos += 5
         doc.setDrawColor(220)
         doc.line(margin, yPos, pageWidth - margin, yPos)
         yPos += 15
@@ -176,19 +176,20 @@ const ChatWidget = () => {
                 yPos = 30
             }
 
-            // Sender Label (Always at the far left margin)
-            doc.setFontSize(10)
+            // Sender Label
+            doc.setFontSize(11)
             doc.setTextColor(msg.sender === "user" ? 60 : 0, 70, 150)
             doc.setFont("helvetica", "bold")
             doc.text(`${senderLabel}:`, margin, yPos)
             yPos += 8
 
-            // Segmented Rendering for better formatting (Text, Mermaid, ASCII/Code)
+            // Segmented Rendering (Restricted Width)
             const mermaidContainers = Array.from(messageElements[i]?.querySelectorAll('.mermaid-container') || [])
             let mermaidIdx = 0
 
             const segments = msg.text.split(/(```[\s\S]*?```)/g)
-            const restrictedWidth = pageWidth - margin - rightGap - contentIndent
+            // Width restricted by margin + rightGap
+            const restrictedWidth = pageWidth - margin - rightGap
 
             for (const segment of segments) {
                 if (!segment || !segment.trim()) continue
@@ -211,20 +212,20 @@ const ChatWidget = () => {
                                 yPos = 30
                             }
 
-                            doc.addImage(imgData, 'PNG', margin + contentIndent, yPos, imgWidth, imgHeight)
+                            doc.addImage(imgData, 'PNG', margin, yPos, imgWidth, imgHeight)
                             yPos += imgHeight + 8
                         } catch (e) {
                             console.error("PDF: Mermaid capture failed", e)
                         }
                     } else {
                         doc.setFont("helvetica", "italic").setFontSize(9).setTextColor(100)
-                        doc.text("[Diagram Rendering...]", margin + contentIndent, yPos)
+                        doc.text("[Diagram Rendering...]", margin, yPos)
                         yPos += 6
                     }
                 } else if (segment.startsWith('```')) {
                     // ASCII Chart or Code Block
                     const code = segment.replace(/```\w*\n?/, '').replace(/```$/, '')
-                    doc.setFont("courier", "normal").setFontSize(9).setTextColor(30)
+                    doc.setFont("courier", "normal").setFontSize(10).setTextColor(30)
 
                     const rawLines = code.split('\n')
                     rawLines.forEach(rawLine => {
@@ -234,15 +235,15 @@ const ChatWidget = () => {
                                 doc.addPage()
                                 yPos = 30
                             }
-                            doc.text(line, margin + contentIndent, yPos)
-                            yPos += 5
+                            doc.text(line, margin, yPos)
+                            yPos += 5.5
                         })
                     })
                     yPos += 4
                 } else {
                     // Standard Markdown Text
                     const cleanText = segment.replace(/[*_#]/g, '').replace(/`/g, '')
-                    doc.setFont("helvetica", "normal").setFontSize(10).setTextColor(30)
+                    doc.setFont("helvetica", "normal").setFontSize(11).setTextColor(30)
 
                     const splitText = doc.splitTextToSize(cleanText, restrictedWidth)
                     splitText.forEach((line) => {
@@ -250,8 +251,8 @@ const ChatWidget = () => {
                             doc.addPage()
                             yPos = 30
                         }
-                        doc.text(line, margin + contentIndent, yPos)
-                        yPos += 6
+                        doc.text(line, margin, yPos)
+                        yPos += 6.5 // Slightly more breathing room for larger font
                     })
                 }
             }
