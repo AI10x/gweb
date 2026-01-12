@@ -132,11 +132,12 @@ const ChatWidget = () => {
     }
 
     const handleDownloadPDF = async () => {
-        const doc = new jsPDF()
+        // Use A3 for a much larger working area
+        const doc = new jsPDF('p', 'mm', 'a3')
         const pageWidth = doc.internal.pageSize.width
         const pageHeight = doc.internal.pageSize.height
-        const margin = 20
-        let yPos = 20
+        const margin = 25 // Slightly larger margin for A3
+        let yPos = 25
 
         // Header
         doc.setFontSize(18)
