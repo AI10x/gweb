@@ -174,17 +174,15 @@ const ChatWidget = () => {
             }
 
             // Sender Label
-            doc.setFontSize(9)
+            doc.setFontSize(10)
             doc.setTextColor(msg.sender === "user" ? 60 : 0, 70, 150)
             doc.setFont("helvetica", "bold")
-            const senderText = `${senderLabel}: `
-            doc.text(senderText, margin, yPos)
-            const senderWidth = doc.getTextWidth(senderText)
+            doc.text(`${senderLabel}:`, margin, yPos)
+            yPos += 6
 
             // Mermaid Check
             const hasMermaid = msg.text.includes('```mermaid')
             if (hasMermaid && messageElements[i]) {
-                yPos += 6
                 const diagramContainer = messageElements[i].querySelector('.mermaid-container')
                 if (diagramContainer) {
                     try {
@@ -194,7 +192,7 @@ const ChatWidget = () => {
                             useCORS: true
                         })
                         const imgData = canvas.toDataURL('image/png')
-                        const imgWidth = pageWidth - (margin * 2) - 10
+                        const imgWidth = pageWidth - (margin * 2)
                         const imgHeight = (canvas.height * imgWidth) / canvas.width
 
                         if (yPos + imgHeight > pageHeight - 15) {
@@ -202,7 +200,7 @@ const ChatWidget = () => {
                             yPos = 20
                         }
 
-                        doc.addImage(imgData, 'PNG', margin + 5, yPos, imgWidth, imgHeight)
+                        doc.addImage(imgData, 'PNG', margin, yPos, imgWidth, imgHeight)
                         yPos += imgHeight + 6
                     } catch (e) {
                         console.error("Failed to capture mermaid diagram:", e)
@@ -210,33 +208,31 @@ const ChatWidget = () => {
                 }
             }
 
-            // Message Content Styling (Subtle Cursive Feel)
+            // Message Content
             const cleanText = msg.text
                 .replace(/```mermaid[\s\S]*?```/g, '[Visual Flowchart Included]')
                 .replace(/[*_#]/g, '')
                 .replace(/`/g, '')
 
-            doc.setFontSize(8)
+            doc.setFontSize(10)
             doc.setTextColor(30)
-            doc.setFont("times", "italic")
+            doc.setFont("helvetica", "normal")
 
-            // Inline and Indentation Logic
-            const contentIndent = senderWidth
-            const contentWidth = pageWidth - (margin * 2) - contentIndent - 5
+            const contentWidth = pageWidth - (margin * 2)
             const splitText = doc.splitTextToSize(cleanText, contentWidth)
 
-            splitText.forEach((line, index) => {
+            splitText.forEach((line) => {
                 if (yPos > pageHeight - 15) {
                     doc.addPage()
                     yPos = 20
                 }
 
-                // Indent everything to the right of the sender label for a structured 'inline' look
-                doc.text(line, margin + contentIndent, yPos)
-                yPos += 4.5 // Tighter spacing
+                // Start from the far left margin
+                doc.text(line, margin, yPos)
+                yPos += 6
             })
 
-            yPos += 5 // Spacing between messages
+            yPos += 8 // Spacing between messages
         }
 
         doc.save("ai10x-strategy-report.pdf")
