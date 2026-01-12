@@ -181,28 +181,25 @@ const ChatWidget = () => {
             doc.setTextColor(msg.sender === "user" ? 60 : 0, 70, 150)
             doc.setFont("helvetica", "bold")
             doc.text(`${senderLabel}:`, margin, yPos)
-            yPos += 8
+            yPos += 10
 
-            // Segmented Rendering (Restricted Width)
+            // Message Analysis (Segments: Code/Mermaid, HRs, and Text)
+            // Splitting by Mermaid, Code, or thematic breaks (--- *** ___)
+            const segments = msg.text.split(/(```[\s\S]*?```|\n---\n|\n\*\*\*\n|\n___\n)/g)
+            const restrictedWidth = pageWidth - margin - rightGap
+
             const mermaidContainers = Array.from(messageElements[i]?.querySelectorAll('.mermaid-container') || [])
             let mermaidIdx = 0
-
-            const segments = msg.text.split(/(```[\s\S]*?```)/g)
-            // Width restricted by margin + rightGap
-            const restrictedWidth = pageWidth - margin - rightGap
 
             for (const segment of segments) {
                 if (!segment || !segment.trim()) continue
 
                 if (segment.startsWith('```mermaid')) {
+                    // Mermaid Diagram with Semantic Spacing
                     const container = mermaidContainers[mermaidIdx++]
                     if (container) {
                         try {
-                            const canvas = await html2canvas(container, {
-                                scale: 2,
-                                logging: false,
-                                useCORS: true
-                            })
+                            const canvas = await html2canvas(container, { scale: 2, logging: false, useCORS: true })
                             const imgData = canvas.toDataURL('image/png')
                             const imgWidth = restrictedWidth
                             const imgHeight = (canvas.height * imgWidth) / canvas.width
@@ -213,51 +210,57 @@ const ChatWidget = () => {
                             }
 
                             doc.addImage(imgData, 'PNG', margin, yPos, imgWidth, imgHeight)
-                            yPos += imgHeight + 8
+                            yPos += imgHeight + 10 // Extra spacing for grouping
                         } catch (e) {
-                            console.error("PDF: Mermaid capture failed", e)
+                            console.error("PDF: Mermaid failed", e)
                         }
-                    } else {
-                        doc.setFont("helvetica", "italic").setFontSize(9).setTextColor(100)
-                        doc.text("[Diagram Rendering...]", margin, yPos)
-                        yPos += 6
                     }
                 } else if (segment.startsWith('```')) {
-                    // ASCII Chart or Code Block
+                    // ASCII/Code Block with Courier
                     const code = segment.replace(/```\w*\n?/, '').replace(/```$/, '')
                     doc.setFont("courier", "normal").setFontSize(10).setTextColor(30)
 
-                    const rawLines = code.split('\n')
-                    rawLines.forEach(rawLine => {
+                    yPos += 2 // Padding before block
+                    const codeLines = code.split('\n')
+                    codeLines.forEach(rawLine => {
                         const splitLines = doc.splitTextToSize(rawLine, restrictedWidth)
                         splitLines.forEach(line => {
-                            if (yPos > pageHeight - 15) {
-                                doc.addPage()
-                                yPos = 30
-                            }
+                            if (yPos > pageHeight - 15) { doc.addPage(); yPos = 30 }
                             doc.text(line, margin, yPos)
                             yPos += 5.5
                         })
                     })
-                    yPos += 4
+                    yPos += 8 // Strategic gap after code block
+                } else if (segment.match(/^\n?(---\|\*\*\*|___)\n?$/)) {
+                    // Visual Separator (Horizontal Rule)
+                    yPos += 2
+                    doc.setDrawColor(200)
+                    doc.line(margin, yPos, margin + restrictedWidth, yPos)
+                    yPos += 8
                 } else {
-                    // Standard Markdown Text
-                    const cleanText = segment.replace(/[*_#]/g, '').replace(/`/g, '')
+                    // Standard Text with Paragraph Detection
+                    const cleanSegment = segment.replace(/[*_#]/g, '').replace(/`/g, '')
+                    const paragraphs = cleanSegment.split('\n\n')
+
                     doc.setFont("helvetica", "normal").setFontSize(11).setTextColor(30)
 
-                    const splitText = doc.splitTextToSize(cleanText, restrictedWidth)
-                    splitText.forEach((line) => {
-                        if (yPos > pageHeight - 15) {
-                            doc.addPage()
-                            yPos = 30
-                        }
-                        doc.text(line, margin, yPos)
-                        yPos += 6.5 // Slightly more breathing room for larger font
+                    paragraphs.forEach((para, pIdx) => {
+                        if (!para.trim()) return
+
+                        const lines = doc.splitTextToSize(para.trim(), restrictedWidth)
+                        lines.forEach(line => {
+                            if (yPos > pageHeight - 15) { doc.addPage(); yPos = 30 }
+                            doc.text(line, margin, yPos)
+                            yPos += 6.5
+                        })
+
+                        // Standard paragraph gap (double spacing)
+                        if (pIdx < paragraphs.length - 1) yPos += 6.5
                     })
                 }
             }
 
-            yPos += 6 // Spacing between messages
+            yPos += 4 // Spacing between messages
         }
 
         doc.save("ai10x-strategy-report.pdf")
