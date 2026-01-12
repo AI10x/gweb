@@ -136,51 +136,55 @@ const ChatWidget = () => {
         const pageWidth = doc.internal.pageSize.width
         const pageHeight = doc.internal.pageSize.height
         const margin = 20
-        let yPos = 25
+        let yPos = 20
 
         // Header
-        doc.setFontSize(22)
+        doc.setFontSize(18)
         doc.setTextColor(40, 44, 52)
         doc.setFont("helvetica", "bold")
         doc.text("AI10xTech", margin, yPos)
 
-        yPos += 10
-        doc.setFontSize(14)
+        yPos += 8
+        doc.setFontSize(12)
         doc.setFont("helvetica", "normal")
         doc.text("Lean Startup Strategy Report", margin, yPos)
 
-        yPos += 10
-        doc.setFontSize(10)
+        yPos += 7
+        doc.setFontSize(8)
         doc.setTextColor(120)
         doc.text(`Generated: ${new Date().toLocaleString()}`, margin, yPos)
 
         // Divider
-        yPos += 5
-        doc.setDrawColor(200)
+        yPos += 4
+        doc.setDrawColor(220)
         doc.line(margin, yPos, pageWidth - margin, yPos)
-        yPos += 15
+        yPos += 10
+
         // Get all message elements from DOM to find diagrams
         const messageElements = document.querySelectorAll('.message')
 
         for (let i = 0; i < messages.length; i++) {
             const msg = messages[i]
-            const sender = msg.sender === "user" ? "ENTREPRENEUR" : "STRATEGIST (AI10xTech)"
+            const senderLabel = msg.sender === "user" ? "ENTREPRENEUR" : "AI10x STRATEGIST"
 
-            // Check for space for sender name
-            if (yPos > pageHeight - 30) {
+            // Check for space
+            if (yPos > pageHeight - 20) {
                 doc.addPage()
-                yPos = 25
+                yPos = 20
             }
 
-            doc.setFontSize(11)
+            // Sender Label
+            doc.setFontSize(9)
             doc.setTextColor(msg.sender === "user" ? 60 : 0, 70, 150)
             doc.setFont("helvetica", "bold")
-            doc.text(`${sender}:`, margin, yPos)
-            yPos += 7
-            // Check if this message has a mermaid diagram
-            const hasMermaid = msg.text.includes('```mermaid')
+            const senderText = `${senderLabel}: `
+            doc.text(senderText, margin, yPos)
+            const senderWidth = doc.getTextWidth(senderText)
 
+            // Mermaid Check
+            const hasMermaid = msg.text.includes('```mermaid')
             if (hasMermaid && messageElements[i]) {
+                yPos += 6
                 const diagramContainer = messageElements[i].querySelector('.mermaid-container')
                 if (diagramContainer) {
                     try {
@@ -190,44 +194,52 @@ const ChatWidget = () => {
                             useCORS: true
                         })
                         const imgData = canvas.toDataURL('image/png')
-                        const imgWidth = pageWidth - (margin * 2)
+                        const imgWidth = pageWidth - (margin * 2) - 10
                         const imgHeight = (canvas.height * imgWidth) / canvas.width
 
                         if (yPos + imgHeight > pageHeight - 15) {
                             doc.addPage()
-                            yPos = 25
+                            yPos = 20
                         }
 
-                        doc.addImage(imgData, 'PNG', margin, yPos, imgWidth, imgHeight)
-                        yPos += imgHeight + 10
+                        doc.addImage(imgData, 'PNG', margin + 5, yPos, imgWidth, imgHeight)
+                        yPos += imgHeight + 6
                     } catch (e) {
                         console.error("Failed to capture mermaid diagram:", e)
                     }
                 }
             }
 
-            // Also render the text (cleaning markdown except diagrams)
+            // Message Content
             const cleanText = msg.text
-                .replace(/```mermaid[\s\S]*?```/g, '[Flowchart rendered above]')
+                .replace(/```mermaid[\s\S]*?```/g, '[Visual Flowchart Included]')
                 .replace(/[*_#]/g, '')
                 .replace(/`/g, '')
 
-            doc.setFontSize(10)
+            doc.setFontSize(8)
             doc.setTextColor(30)
             doc.setFont("helvetica", "normal")
 
-            const splitText = doc.splitTextToSize(cleanText, pageWidth - (margin * 2) - 5)
+            const otherLineMax = pageWidth - (margin * 2) - 10
+            const splitText = doc.splitTextToSize(cleanText, otherLineMax)
 
-            splitText.forEach((line) => {
+            splitText.forEach((line, index) => {
                 if (yPos > pageHeight - 15) {
                     doc.addPage()
-                    yPos = 25
+                    yPos = 20
                 }
-                doc.text(line, margin + 5, yPos)
-                yPos += 6
+
+                if (index === 0 && !hasMermaid) {
+                    doc.text(line, margin + senderWidth, yPos)
+                    yPos += 5
+                } else {
+                    if (index === 0 && hasMermaid) yPos += 5
+                    doc.text(line, margin + 5, yPos)
+                    yPos += 5
+                }
             })
 
-            yPos += 8 // Spacing between messages
+            yPos += 6 // Spacing between messages
         }
 
         doc.save("ai10x-strategy-report.pdf")
