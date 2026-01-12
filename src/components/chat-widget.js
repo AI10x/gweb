@@ -181,59 +181,80 @@ const ChatWidget = () => {
             doc.text(`${senderLabel}:`, margin, yPos)
             yPos += 6
 
-            // Mermaid Check
-            const hasMermaid = msg.text.includes('```mermaid')
-            if (hasMermaid && messageElements[i]) {
-                const diagramContainer = messageElements[i].querySelector('.mermaid-container')
-                if (diagramContainer) {
-                    try {
-                        const canvas = await html2canvas(diagramContainer, {
-                            scale: 2,
-                            logging: false,
-                            useCORS: true
-                        })
-                        const imgData = canvas.toDataURL('image/png')
-                        const imgWidth = pageWidth - (margin * 2)
-                        const imgHeight = (canvas.height * imgWidth) / canvas.width
+            // Segmented Rendering for better formatting (Text, Mermaid, ASCII/Code)
+            const mermaidContainers = Array.from(messageElements[i]?.querySelectorAll('.mermaid-container') || [])
+            let mermaidIdx = 0
 
-                        if (yPos + imgHeight > pageHeight - 15) {
-                            doc.addPage()
-                            yPos = 20
+            const segments = msg.text.split(/(```[\s\S]*?```)/g)
+
+            for (const segment of segments) {
+                if (!segment || !segment.trim()) continue
+
+                if (segment.startsWith('```mermaid')) {
+                    const container = mermaidContainers[mermaidIdx++]
+                    if (container) {
+                        try {
+                            const canvas = await html2canvas(container, {
+                                scale: 2,
+                                logging: false,
+                                useCORS: true
+                            })
+                            const imgData = canvas.toDataURL('image/png')
+                            const imgWidth = pageWidth - (margin * 2)
+                            const imgHeight = (canvas.height * imgWidth) / canvas.width
+
+                            if (yPos + imgHeight > pageHeight - 15) {
+                                doc.addPage()
+                                yPos = 25
+                            }
+
+                            doc.addImage(imgData, 'PNG', margin, yPos, imgWidth, imgHeight)
+                            yPos += imgHeight + 6
+                        } catch (e) {
+                            console.error("PDF: Mermaid capture failed", e)
                         }
-
-                        doc.addImage(imgData, 'PNG', margin, yPos, imgWidth, imgHeight)
-                        yPos += imgHeight + 6
-                    } catch (e) {
-                        console.error("Failed to capture mermaid diagram:", e)
+                    } else {
+                        doc.setFont("helvetica", "italic").setFontSize(9).setTextColor(100)
+                        doc.text("[Diagram Rendering...]", margin, yPos)
+                        yPos += 6
                     }
+                } else if (segment.startsWith('```')) {
+                    // ASCII Chart or Code Block
+                    const code = segment.replace(/```\w*\n?/, '').replace(/```$/, '')
+                    doc.setFont("courier", "normal").setFontSize(9).setTextColor(30)
+
+                    // Split code by newlines to preserve indentation, then split long lines
+                    const rawLines = code.split('\n')
+                    rawLines.forEach(rawLine => {
+                        const splitLines = doc.splitTextToSize(rawLine, pageWidth - (margin * 2))
+                        splitLines.forEach(line => {
+                            if (yPos > pageHeight - 15) {
+                                doc.addPage()
+                                yPos = 25
+                            }
+                            doc.text(line, margin, yPos)
+                            yPos += 5 // Tighter height for code
+                        })
+                    })
+                    yPos += 2 // Gap after block
+                } else {
+                    // Standard Markdown Text
+                    const cleanText = segment.replace(/[*_#]/g, '').replace(/`/g, '')
+                    doc.setFont("helvetica", "normal").setFontSize(10).setTextColor(30)
+
+                    const splitText = doc.splitTextToSize(cleanText, pageWidth - (margin * 2))
+                    splitText.forEach((line) => {
+                        if (yPos > pageHeight - 15) {
+                            doc.addPage()
+                            yPos = 25
+                        }
+                        doc.text(line, margin, yPos)
+                        yPos += 6
+                    })
                 }
             }
 
-            // Message Content
-            const cleanText = msg.text
-                .replace(/```mermaid[\s\S]*?```/g, '[Visual Flowchart Included]')
-                .replace(/[*_#]/g, '')
-                .replace(/`/g, '')
-
-            doc.setFontSize(10)
-            doc.setTextColor(30)
-            doc.setFont("helvetica", "normal")
-
-            const contentWidth = pageWidth - (margin * 2)
-            const splitText = doc.splitTextToSize(cleanText, contentWidth)
-
-            splitText.forEach((line) => {
-                if (yPos > pageHeight - 15) {
-                    doc.addPage()
-                    yPos = 20
-                }
-
-                // Start from the far left margin
-                doc.text(line, margin, yPos)
-                yPos += 6
-            })
-
-            yPos += 8 // Spacing between messages
+            yPos += 4 // Spacing between messages
         }
 
         doc.save("ai10x-strategy-report.pdf")
