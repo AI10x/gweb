@@ -47,8 +47,7 @@ const ChatWidget = () => {
     const messagesEndRef = useRef(null)
 
     const thoughts = [
-        "Help in your design thinking process? Donate at - https://ud.me/ai10x.org",
-        "Check this out - design thinking related! Donate at - https://ud.me/ai10x.org",
+        "Design thinking toolbox? Donate at - https://ud.me/ai10x.org",
         "I'm here for your team! Donate at - https://ud.me/ai10x.org",
         "Lean startup? Donate at - https://ud.me/ai10x.org",
         "MVP (minimum vaiable product)? Donate at - https://ud.me/ai10x.org",
