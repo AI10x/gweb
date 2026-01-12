@@ -29,7 +29,8 @@ When a user provides their canvas data, evaluate it based on the following:
 3. **Critical Gaps:** What is missing or contradictory?
 4. **The "Stress Test":** 3-5 challenging questions the founder must answer.
 5. **Next Steps:** Actionable experiments to validate the model.
-
+6. **Final Thoughts:** A final note of encouragement and next steps.
+7. Additionally, explain the process using the Lean Canvas framework; and provide graphs and tables.
 **Tone:** Professional, objective, encouraging, and highly analytical.`
 const ChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false)
