@@ -151,7 +151,7 @@ const ChatWidget = () => {
         const pageHeight = doc.internal.pageSize.height
         const margin = 10 // Minimal left margin for "no gap" look
         const rightGap = 80 // Massive breathable gap on the right
-        const contentIndent = 0 // No internal indentation
+        const contentIndent = 15 // Indent content relative to labels
         let yPos = 20
 
         // Header (Alinged to left margin)
@@ -199,7 +199,7 @@ const ChatWidget = () => {
             // Message Analysis (Segments: Code/Mermaid, HRs, and Text)
             // Splitting by Mermaid, Code, or thematic breaks (--- *** ___)
             const segments = msg.text.split(/(```[\s\S]*?```|\n---\n|\n\*\*\*\n|\n___\n)/g)
-            const restrictedWidth = pageWidth - margin - rightGap
+            const restrictedWidth = pageWidth - margin - contentIndent - rightGap
 
             const mermaidContainers = Array.from(messageElements[i]?.querySelectorAll('.mermaid-container') || [])
             let mermaidIdx = 0
@@ -215,15 +215,17 @@ const ChatWidget = () => {
                             const canvas = await html2canvas(container, { scale: 2, logging: false, useCORS: true })
                             const imgData = canvas.toDataURL('image/png')
                             const imgWidth = restrictedWidth
-                            const imgHeight = (canvas.height * imgWidth) / canvas.width
+                            const imgHeight = canvas.width > 0 ? (canvas.height * imgWidth) / canvas.width : 0
 
-                            if (yPos + imgHeight > pageHeight - 20) {
-                                doc.addPage()
-                                yPos = 30
+                            if (imgHeight > 0) {
+                                if (yPos + imgHeight > pageHeight - 20) {
+                                    doc.addPage()
+                                    yPos = 30
+                                }
+
+                                doc.addImage(imgData, 'PNG', margin + contentIndent, yPos, imgWidth, imgHeight)
+                                yPos += imgHeight + 10 // Extra spacing for grouping
                             }
-
-                            doc.addImage(imgData, 'PNG', margin, yPos, imgWidth, imgHeight)
-                            yPos += imgHeight + 10 // Extra spacing for grouping
                         } catch (e) {
                             console.error("PDF: Mermaid failed", e)
                         }
@@ -236,15 +238,15 @@ const ChatWidget = () => {
                     yPos += 2 // Padding before block
                     const codeLines = code.split('\n')
                     codeLines.forEach(rawLine => {
-                        // Use helper to ensure no run-on lines
-                        yPos = addWrappedText(doc, rawLine, margin, restrictedWidth, yPos, 5.5)
+                        // Use helper to ensure no run-on lines and update yPos
+                        yPos = addWrappedText(doc, rawLine, margin + contentIndent, restrictedWidth, yPos, 5.5)
                     })
                     yPos += 8 // Strategic gap after code block
-                } else if (segment.match(/^\n?(---\|\*\*\*|___)\n?$/)) {
+                } else if (segment.match(/^\n?(---|\*\*\*|___)\n?$/)) {
                     // Visual Separator (Horizontal Rule)
                     yPos += 2
                     doc.setDrawColor(200)
-                    doc.line(margin, yPos, margin + restrictedWidth, yPos)
+                    doc.line(margin + contentIndent, yPos, margin + contentIndent + restrictedWidth, yPos)
                     yPos += 8
                 } else {
                     // Standard Text with Paragraph Detection
@@ -257,7 +259,7 @@ const ChatWidget = () => {
                         if (!para.trim()) return
 
                         // Use helper to avoid overflow and update yPos
-                        yPos = addWrappedText(doc, para.trim(), margin, restrictedWidth, yPos)
+                        yPos = addWrappedText(doc, para.trim(), margin + contentIndent, restrictedWidth, yPos)
 
                         // Standard paragraph gap (double spacing)
                         if (pIdx < paragraphs.length - 1) yPos += 6.5
