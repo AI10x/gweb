@@ -130,17 +130,18 @@ const ChatWidget = () => {
         }
     }
 
-    // Helper to add wrapped text without overflow
-    function addWrappedText(doc, text, x, maxWidth, yPosRef, lineHeight = 6.5) {
+    // Helper to add wrapped text without overflow and return updated yPos
+    function addWrappedText(doc, text, x, maxWidth, yPos, lineHeight = 6.5) {
         const lines = doc.splitTextToSize(text, maxWidth)
         lines.forEach(line => {
-            if (yPosRef.value > doc.internal.pageSize.height - 15) {
+            if (yPos > doc.internal.pageSize.height - 15) {
                 doc.addPage()
-                yPosRef.value = 30
+                yPos = 30
             }
-            doc.text(line, x, yPosRef.value)
-            yPosRef.value += lineHeight
+            doc.text(line, x, yPos)
+            yPos += lineHeight
         })
+        return yPos
     }
 
     const handleDownloadPDF = async () => {
@@ -236,7 +237,7 @@ const ChatWidget = () => {
                     const codeLines = code.split('\n')
                     codeLines.forEach(rawLine => {
                         // Use helper to ensure no run-on lines
-                        addWrappedText(doc, rawLine, margin, restrictedWidth, { value: yPos }, 5.5)
+                        yPos = addWrappedText(doc, rawLine, margin, restrictedWidth, yPos, 5.5)
                     })
                     yPos += 8 // Strategic gap after code block
                 } else if (segment.match(/^\n?(---\|\*\*\*|___)\n?$/)) {
@@ -255,8 +256,8 @@ const ChatWidget = () => {
                     paragraphs.forEach((para, pIdx) => {
                         if (!para.trim()) return
 
-                        // Use helper to avoid overflow
-                        addWrappedText(doc, para.trim(), margin, restrictedWidth, { value: yPos })
+                        // Use helper to avoid overflow and update yPos
+                        yPos = addWrappedText(doc, para.trim(), margin, restrictedWidth, yPos)
 
                         // Standard paragraph gap (double spacing)
                         if (pIdx < paragraphs.length - 1) yPos += 6.5
