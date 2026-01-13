@@ -149,24 +149,24 @@ const ChatWidget = () => {
         const doc = new jsPDF('p', 'mm', 'a3')
         const pageWidth = doc.internal.pageSize.width
         const pageHeight = doc.internal.pageSize.height
-        const margin = 10 // Minimal left margin for "no gap" look
+        const margin = 5 // Zero/minimal left margin
         const rightGap = 80 // Massive breathable gap on the right
-        const contentIndent = 15 // Indent content relative to labels
-        let yPos = 20
+        const contentIndent = 0 // No indentation for max width
+        let yPos = 15
 
         // Header (Alinged to left margin)
-        doc.setFontSize(22)
+        doc.setFontSize(16)
         doc.setTextColor(40, 44, 52)
         doc.setFont("helvetica", "bold")
         doc.text("AI10xTech", margin, yPos)
 
-        yPos += 10
-        doc.setFontSize(14)
+        yPos += 8
+        doc.setFontSize(10)
         doc.setFont("helvetica", "normal")
         doc.text("Lean Startup Strategy Report", margin, yPos)
 
-        yPos += 8
-        doc.setFontSize(9)
+        yPos += 5
+        doc.setFontSize(7)
         doc.setTextColor(120)
         doc.text(`Generated: ${new Date().toLocaleString()}`, margin, yPos)
 
@@ -190,11 +190,11 @@ const ChatWidget = () => {
             }
 
             // Sender Label
-            doc.setFontSize(11)
+            doc.setFontSize(8)
             doc.setTextColor(msg.sender === "user" ? 60 : 0, 70, 150)
             doc.setFont("helvetica", "bold")
             doc.text(`${senderLabel}:`, margin, yPos)
-            yPos += 10
+            yPos += 6
 
             // Message Analysis (Segments: Code/Mermaid, HRs, and Text)
             // Splitting by Mermaid, Code, or thematic breaks (--- *** ___)
@@ -233,15 +233,15 @@ const ChatWidget = () => {
                 } else if (segment.startsWith('```')) {
                     // ASCII/Code Block with Courier
                     const code = segment.replace(/```\w*\n?/, '').replace(/```$/, '')
-                    doc.setFont("courier", "normal").setFontSize(10).setTextColor(30)
+                    doc.setFont("courier", "normal").setFontSize(7).setTextColor(30)
 
                     yPos += 2 // Padding before block
                     const codeLines = code.split('\n')
                     codeLines.forEach(rawLine => {
                         // Use helper to ensure no run-on lines and update yPos
-                        yPos = addWrappedText(doc, rawLine, margin + contentIndent, restrictedWidth, yPos, 5.5)
+                        yPos = addWrappedText(doc, rawLine, margin + contentIndent, restrictedWidth, yPos, 4.5)
                     })
-                    yPos += 8 // Strategic gap after code block
+                    yPos += 6 // Strategic gap after code block
                 } else if (segment.match(/^\n?(---|\*\*\*|___)\n?$/)) {
                     // Visual Separator (Horizontal Rule)
                     yPos += 2
@@ -253,16 +253,16 @@ const ChatWidget = () => {
                     const cleanSegment = segment.replace(/[*_#]/g, '').replace(/`/g, '')
                     const paragraphs = cleanSegment.split('\n\n')
 
-                    doc.setFont("helvetica", "normal").setFontSize(11).setTextColor(30)
+                    doc.setFont("helvetica", "normal").setFontSize(8).setTextColor(30)
 
                     paragraphs.forEach((para, pIdx) => {
                         if (!para.trim()) return
 
                         // Use helper to avoid overflow and update yPos
-                        yPos = addWrappedText(doc, para.trim(), margin + contentIndent, restrictedWidth, yPos)
+                        yPos = addWrappedText(doc, para.trim(), margin + contentIndent, restrictedWidth, yPos, 5)
 
                         // Standard paragraph gap (double spacing)
-                        if (pIdx < paragraphs.length - 1) yPos += 6.5
+                        if (pIdx < paragraphs.length - 1) yPos += 5
                     })
                 }
             }
