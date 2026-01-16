@@ -85,26 +85,106 @@ const ChatWidget = () => {
 
     const handleToggle = () => setIsOpen(!isOpen)
 
+    const [attachments, setAttachments] = useState([])
+    const fileInputRef = useRef(null)
+
+    const handleFileSelect = (e) => {
+        const files = Array.from(e.target.files)
+        if (files.length === 0) return
+
+        const newAttachments = []
+
+        files.forEach(file => {
+            const reader = new FileReader()
+            reader.onload = (e) => {
+                newAttachments.push({
+                    id: Date.now() + Math.random(),
+                    file: file,
+                    preview: file.type.startsWith('image/') ? e.target.result : null,
+                    type: file.type.startsWith('image/') ? 'image' : 'text'
+                })
+
+                if (newAttachments.length === files.length) {
+                    setAttachments(prev => [...prev, ...newAttachments])
+                }
+            }
+            if (file.type.startsWith('image/')) {
+                reader.readAsDataURL(file)
+            } else {
+                // For text files, we might strictly want to read them as text to pass formatted content
+                // But for now, let's just keep track of the file. 
+                // We will read content during send for text files usually, 
+                // but let's read it here for simplicity in one place 
+                // if we want to preview or send as context.
+                // For this implementation, we treat non-images as text attachments effectively.
+                reader.readAsText(file)
+            }
+        })
+
+        // Clear input so same file can be selected again if needed
+        e.target.value = null
+    }
+
+    const removeAttachment = (id) => {
+        setAttachments(prev => prev.filter(att => att.id !== id))
+    }
+
     const handleSend = async (e) => {
         e.preventDefault()
-        if (!inputValue.trim()) return
+        if (!inputValue.trim() && attachments.length === 0) return
 
         const userMessage = {
             id: Date.now(),
             text: inputValue,
             sender: "user",
+            attachments: attachments
         }
 
         const newMessages = [...messages, userMessage]
         setMessages(newMessages)
         setInputValue("")
+        setAttachments([])
         setIsLoading(true)
 
         try {
-            const apiMessages = newMessages.map((msg) => ({
-                role: msg.sender === "user" ? "user" : "assistant",
-                content: msg.text,
-            }))
+            const apiMessages = newMessages.map((msg) => {
+                const role = msg.sender === "user" ? "user" : "assistant"
+
+                if (msg.attachments && msg.attachments.length > 0) {
+                    const content = []
+                    if (msg.text) {
+                        content.push({ type: "text", text: msg.text })
+                    }
+
+                    msg.attachments.forEach(att => {
+                        if (att.type === 'image') {
+                            content.push({
+                                type: "image_url",
+                                image_url: {
+                                    url: att.preview // This is the data URL
+                                }
+                            })
+                        } else {
+                            // For text files, we append them as text blocks
+                            // Note: We need to have stored the content. 
+                            // The reader.onload above for text handled it but 
+                            // we need to make sure we store it in the attachment object.
+                            // Let's refine the reader logic below or assume text is in 'preview' for text files too (as content).
+                            // Revisting handleFileSelect to ensure text content is in 'preview' for non-images:
+                            // The current handleFileSelect reads as text for non-images, assigning result to 'preview'.
+                            // So 'preview' holds the text content.
+                            content.push({
+                                type: "text",
+                                // text: `\n[File: ${att.file.name}]\n${att.preview}\n` 
+                                text: `Attachment ${att.file.name}: ${att.preview}`
+                            })
+                        }
+                    })
+                    return { role, content }
+                } else {
+                    return { role, content: msg.text }
+                }
+            })
 
             const response = await fetchGroqCompletion(apiMessages, SYSTEM_PROMPT)
 
@@ -362,22 +442,70 @@ const ChatWidget = () => {
                     <div ref={messagesEndRef} />
                 </div>
 
-                <form className="chat-input-area" onSubmit={handleSend}>
-                    <input
-                        type="text"
-                        className="chat-input"
-                        placeholder="Type a message..."
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                        disabled={isLoading}
-                    />
-                    <button type="submit" className="send-button" disabled={isLoading}>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '1.2rem', height: '1.2rem' }}>
-                            <line x1="22" y1="2" x2="11" y2="13"></line>
-                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                        </svg>
-                    </button>
-                </form>
+                <div className="chat-input-wrapper">
+                    {attachments.length > 0 && (
+                        <div className="attachment-preview-area">
+                            {attachments.map(att => (
+                                <div key={att.id} className="attachment-preview-item">
+                                    {att.type === 'image' ? (
+                                        <div className="attachment-image-preview">
+                                            <img src={att.preview} alt="nav" />
+                                        </div>
+                                    ) : (
+                                        <div className="attachment-file-preview">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                                                <polyline points="13 2 13 9 20 9"></polyline>
+                                            </svg>
+                                            <span>{att.file.name}</span>
+                                        </div>
+                                    )}
+                                    <button
+                                        type="button"
+                                        className="attachment-remove-btn"
+                                        onClick={() => removeAttachment(att.id)}
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                    <form className="chat-input-area" onSubmit={handleSend}>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileSelect}
+                            style={{ display: 'none' }}
+                            multiple
+                            accept="image/*,text/*,.txt,.md,.js,.py,.json"
+                        />
+                        <button
+                            type="button"
+                            className="attachment-button"
+                            onClick={() => fileInputRef.current?.click()}
+                            title="Attach file"
+                        >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '1.2rem', height: '1.2rem' }}>
+                                <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+                            </svg>
+                        </button>
+                        <input
+                            type="text"
+                            className="chat-input"
+                            placeholder="Type a message..."
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            disabled={isLoading}
+                        />
+                        <button type="submit" className="send-button" disabled={isLoading || (!inputValue.trim() && attachments.length === 0)}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '1.2rem', height: '1.2rem' }}>
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
             </div>
 
             <div className="chat-toggle-wrapper" onClick={handleToggle}>

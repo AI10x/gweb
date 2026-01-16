@@ -294,11 +294,108 @@
     border-left-color: rgba(255, 255, 255, 0.4);
 }
 
+
+
+.chat-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--border-color);
+}
+
 .chat-input-area {
     padding: 1rem;
-    border-top: 1px solid var(--border-color);
     display: flex;
     gap: 0.5rem;
+    width: 100%;
+    box-sizing: border-box;
+    align-items: flex-end;
+    border-top: none;
+}
+
+.attachment-button {
+    background: transparent;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    height: 2.5rem;
+    width: 2.5rem;
+}
+
+.attachment-button:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: #4facfe;
+}
+
+.attachment-preview-area {
+    padding: 0.5rem 1rem 0;
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    max-height: 80px;
+}
+
+.attachment-preview-item {
+    position: relative;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 0.25rem;
+    background: rgba(var(--bg-rgb, 255, 255, 255), 0.5);
+    display: flex;
+    align-items: center;
+    min-width: 60px;
+    max-width: 150px;
+}
+
+.attachment-image-preview img {
+    height: 40px;
+    width: auto;
+    border-radius: 0.25rem;
+    display: block;
+}
+
+.attachment-file-preview {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    padding: 0 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.attachment-file-preview svg {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+}
+
+.attachment-remove-btn {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #ff4757;
+    color: white;
+    border: none;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.attachment-remove-btn:hover {
+    transform: scale(1.1);
 }
 
 .chat-input {
