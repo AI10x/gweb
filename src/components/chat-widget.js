@@ -100,7 +100,7 @@ const ChatWidget = () => {
                 newAttachments.push({
                     id: Date.now() + Math.random(),
                     file: file,
-                    preview: file.type.startsWith('image/') ? e.target.result : null,
+                    preview: e.target.result,
                     type: file.type.startsWith('image/') ? 'image' : 'text'
                 })
 
@@ -161,25 +161,23 @@ const ChatWidget = () => {
                             content.push({
                                 type: "image_url",
                                 image_url: {
-                                    url: att.preview // This is the data URL
+                                    url: att.preview
                                 }
                             })
                         } else {
-                            // For text files, we append them as text blocks
-                            // Note: We need to have stored the content. 
-                            // The reader.onload above for text handled it but 
-                            // we need to make sure we store it in the attachment object.
-                            // Let's refine the reader logic below or assume text is in 'preview' for text files too (as content).
-                            // Revisting handleFileSelect to ensure text content is in 'preview' for non-images:
-                            // The current handleFileSelect reads as text for non-images, assigning result to 'preview'.
-                            // So 'preview' holds the text content.
                             content.push({
                                 type: "text",
-                                // text: `\n[File: ${att.file.name}]\n${att.preview}\n` 
-                                text: `Attachment ${att.file.name}: ${att.preview}`
+                                text: `\n--- START OF FILE: ${att.file.name} ---\n${att.preview}\n--- END OF FILE: ${att.file.name} ---\n`
                             })
                         }
                     })
+
+                    // Add a summary instruction at the end of the content array if files were attached
+                    content.push({
+                        type: "text",
+                        text: "\n[System Instruction: Please summarize the content of the attached file(s) and then address the user's request using that information.]"
+                    })
+
                     return { role, content }
                 } else {
                     return { role, content: msg.text }
