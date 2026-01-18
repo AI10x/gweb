@@ -1,0 +1,2 @@
+summerize the content of the attachment and return the summary to the Groq REST API request
+output the results from Groq REST API request to the user & the summery of contents as well
