@@ -1,7 +1,7 @@
 module.exports = {
   siteMetadata: {
     title: `AI10xTech`,
-    description: `Kick off your next, great Gatsby project with this default starter. This barebones starter ships with the main Gatsby configuration files you might need.`,
+    description: `Use Open Source AI to build your startup projects`,
     author: `@gatsbyjs`,
   },
   plugins: [
