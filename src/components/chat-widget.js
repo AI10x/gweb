@@ -87,6 +87,7 @@ const ChatWidget = () => {
 
     const [attachments, setAttachments] = useState([])
     const fileInputRef = useRef(null)
+    const folderInputRef = useRef(null)
 
     const handleFileSelect = (e) => {
         const files = Array.from(e.target.files)
@@ -100,6 +101,7 @@ const ChatWidget = () => {
                 newAttachments.push({
                     id: Date.now() + Math.random(),
                     file: file,
+                    path: file.webkitRelativePath || file.name,
                     preview: e.target.result,
                     type: file.type.startsWith('image/') ? 'image' : 'text'
                 })
@@ -111,12 +113,6 @@ const ChatWidget = () => {
             if (file.type.startsWith('image/')) {
                 reader.readAsDataURL(file)
             } else {
-                // For text files, we might strictly want to read them as text to pass formatted content
-                // But for now, let's just keep track of the file. 
-                // We will read content during send for text files usually, 
-                // but let's read it here for simplicity in one place 
-                // if we want to preview or send as context.
-                // For this implementation, we treat non-images as text attachments effectively.
                 reader.readAsText(file)
             }
         })
@@ -157,6 +153,7 @@ const ChatWidget = () => {
                     }
 
                     msg.attachments.forEach(att => {
+                        const filePath = att.path || att.file.name
                         if (att.type === 'image') {
                             content.push({
                                 type: "image_url",
@@ -167,7 +164,7 @@ const ChatWidget = () => {
                         } else {
                             content.push({
                                 type: "text",
-                                text: `\n--- START OF FILE: ${att.file.name} ---\n${att.preview}\n--- END OF FILE: ${att.file.name} ---\n`
+                                text: `\n--- START OF FILE: ${filePath} ---\n${att.preview}\n--- END OF FILE: ${filePath} ---\n`
                             })
                         }
                     })
@@ -455,7 +452,7 @@ const ChatWidget = () => {
                                                 <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
                                                 <polyline points="13 2 13 9 20 9"></polyline>
                                             </svg>
-                                            <span>{att.file.name}</span>
+                                            <span title={att.path || att.file.name}>{att.file.name}</span>
                                         </div>
                                     )}
                                     <button
@@ -478,14 +475,33 @@ const ChatWidget = () => {
                             multiple
                             accept="image/*,text/*,.txt,.md,.js,.py,.json"
                         />
+                        <input
+                            type="file"
+                            ref={folderInputRef}
+                            onChange={handleFileSelect}
+                            style={{ display: 'none' }}
+                            webkitdirectory=""
+                            directory=""
+                            mozdirectory=""
+                        />
                         <button
                             type="button"
                             className="attachment-button"
                             onClick={() => fileInputRef.current?.click()}
-                            title="Attach file"
+                            title="Attach files"
                         >
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '1.2rem', height: '1.2rem' }}>
                                 <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+                            </svg>
+                        </button>
+                        <button
+                            type="button"
+                            className="attachment-button"
+                            onClick={() => folderInputRef.current?.click()}
+                            title="Attach folder"
+                        >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '1.2rem', height: '1.2rem' }}>
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
                             </svg>
                         </button>
                         <input
