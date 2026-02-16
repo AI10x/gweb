@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react"
 import { jsPDF } from "jspdf"
 import html2canvas from "html2canvas"
 import ReactMarkdown from "react-markdown"
+import { ethers } from "ethers"
 import MermaidDiagram from "./mermaid-diagram"
 import Header from "./header"
 import Avatar from "./avatar"
@@ -357,6 +358,34 @@ const ChatWidget = () => {
         }
     }
 
+    const connectAndSign = async () => {
+        if (!window.ethereum) {
+            console.log("Please install MetaMask!")
+            alert("Please install MetaMask to use this feature.")
+            return
+        }
+
+        try {
+            console.log("Connecting...")
+            const provider = new ethers.BrowserProvider(window.ethereum)
+            const signer = await provider.getSigner()
+            const address = await signer.getAddress()
+
+            console.log("Signing...")
+            const message = `Identity verification for: ${address}`
+            const signature = await signer.signMessage(message)
+
+            console.log("Connected Address:", address)
+            console.log("Signed Message:", message)
+            console.log("Signature:", signature)
+
+            alert(`Signed! Check console for details.\nAddress: ${address}`)
+        } catch (error) {
+            console.error("Error connecting/signing:", error)
+            alert("Error: " + error.message)
+        }
+    }
+
     return (
         <div className="chat-widget-container">
             <div className={`chat-window ${isOpen ? "" : "closed"}`}>
@@ -371,6 +400,13 @@ const ChatWidget = () => {
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                 <polyline points="7 10 12 15 17 10"></polyline>
                                 <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                        </button>
+                        <button onClick={connectAndSign} className="header-action-button" title="Connect & Sign Wallet">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '1.2rem', height: '1.2rem' }}>
+                                <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"></path>
+                                <path d="M4 6v12c0 1.1.9 2 2 2h14v-4"></path>
+                                <path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"></path>
                             </svg>
                         </button>
                         <button onClick={handleToggle} className="header-action-button" title="Close chat">
