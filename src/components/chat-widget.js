@@ -8,6 +8,7 @@ import Header from "./header"
 import Avatar from "./avatar"
 import "./chat-widget.css"
 import { fetchGroqCompletion } from "../services/groq"
+import { fetchAdditionalApiCompletion } from "../services/api-service"
 import AI10xIcon from "../images/ai10x-icon.png"
 
 const SYSTEM_PROMPT = `**Role:** You are an expert Lean Startup Strategist and Venture Capital Analyst with a deep understanding of Ash Maurya’s Lean Canvas framework.
@@ -45,6 +46,7 @@ const ChatWidget = () => {
     const [isBubbleVisible, setIsBubbleVisible] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [copiedId, setCopiedId] = useState(null)
+    const [verifiedAddress, setVerifiedAddress] = useState(null)
     const messagesEndRef = useRef(null)
 
     const thoughts = [
@@ -182,7 +184,18 @@ const ChatWidget = () => {
                 }
             })
 
-            const response = await fetchGroqCompletion(apiMessages, SYSTEM_PROMPT)
+            let response
+            if (verifiedAddress) {
+                try {
+                    console.log("Attempting additional API with address:", verifiedAddress)
+                    response = await fetchAdditionalApiCompletion(apiMessages, verifiedAddress)
+                } catch (apiError) {
+                    console.error("Additional API failed, falling back to Groq:", apiError)
+                    response = await fetchGroqCompletion(apiMessages, SYSTEM_PROMPT)
+                }
+            } else {
+                response = await fetchGroqCompletion(apiMessages, SYSTEM_PROMPT)
+            }
 
             const assistantMessage = {
                 id: Date.now() + 1,
@@ -379,6 +392,7 @@ const ChatWidget = () => {
             console.log("Signed Message:", message)
             console.log("Signature:", signature)
 
+            setVerifiedAddress(address)
             alert(`Signed! Check console for details.\nAddress: ${address}`)
         } catch (error) {
             console.error("Error connecting/signing:", error)
