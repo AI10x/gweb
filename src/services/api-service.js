@@ -1,5 +1,5 @@
 export const fetchAdditionalApiCompletion = async (messages, address) => {
-    const apiUrl = "http://170.64.238.7:80/api/chat"; // Placeholder URL
+    const apiUrl = process.env.GATSBY_ADDITIONAL_API_URL || "http://170.64.238.7:80/api/chat"; // Placeholder URL
 
     try {
         const response = await fetch(apiUrl, {
