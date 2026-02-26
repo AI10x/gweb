@@ -1,5 +1,5 @@
 export const fetchAdditionalApiCompletion = async (messages, address) => {
-    const apiUrl = process.env.GATSBY_ADDITIONAL_API_URL || "http://170.64.238.7:80/api/chat";
+    const apiUrl = process.env.GATSBY_ADDITIONAL_API_URL || "";
 
     // Extract prompt safely, handling both string and array content (multi-modal)
     const lastMessage = messages[messages.length - 1];
