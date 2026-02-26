@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react"
-import { jsPDF } from "jspdf"
-import html2canvas from "html2canvas"
+import { generateChatPDF } from "../utils/pdf-generator"
 import ReactMarkdown from "react-markdown"
 import { ethers } from "ethers"
 import MermaidDiagram from "./mermaid-diagram"
@@ -219,147 +218,9 @@ const ChatWidget = () => {
         }
     }
 
-    // Helper to add wrapped text without overflow and return updated yPos
-    function addWrappedText(doc, text, x, maxWidth, yPos, lineHeight = 6.5) {
-        const lines = doc.splitTextToSize(text, maxWidth)
-        lines.forEach(line => {
-            if (yPos > doc.internal.pageSize.height - 15) {
-                doc.addPage()
-                yPos = 30
-            }
-            doc.text(line, x, yPos)
-            yPos += lineHeight
-        })
-        return yPos
-    }
 
     const handleDownloadPDF = async () => {
-        // Use A3 for a much larger working area
-        const doc = new jsPDF('p', 'mm', 'a3')
-        const pageWidth = doc.internal.pageSize.width
-        const pageHeight = doc.internal.pageSize.height
-        const margin = 5 // Zero/minimal left margin
-        const rightGap = 80 // Massive breathable gap on the right
-        const contentIndent = 0 // No indentation for max width
-        let yPos = 15
-
-        // Header (Alinged to left margin)
-        doc.setFontSize(16)
-        doc.setTextColor(40, 44, 52)
-        doc.setFont("helvetica", "bold")
-        doc.text("AI10xTech", margin, yPos)
-
-        yPos += 8
-        doc.setFontSize(10)
-        doc.setFont("helvetica", "normal")
-        doc.text("Lean Startup Strategy Report", margin, yPos)
-
-        yPos += 5
-        doc.setFontSize(7)
-        doc.setTextColor(120)
-        doc.text(`Generated: ${new Date().toLocaleString()}`, margin, yPos)
-
-        // Divider
-        yPos += 5
-        doc.setDrawColor(220)
-        doc.line(margin, yPos, pageWidth - margin, yPos)
-        yPos += 15
-
-        // Get all message elements from DOM to find diagrams
-        const messageElements = document.querySelectorAll('.message')
-
-        for (let i = 0; i < messages.length; i++) {
-            const msg = messages[i]
-            const senderLabel = msg.sender === "user" ? "ENTREPRENEUR" : "AI10x STRATEGIST"
-
-            // Check for space
-            if (yPos > pageHeight - 30) {
-                doc.addPage()
-                yPos = 30
-            }
-
-            // Sender Label
-            doc.setFontSize(8)
-            doc.setTextColor(msg.sender === "user" ? 60 : 0, 70, 150)
-            doc.setFont("helvetica", "bold")
-            doc.text(`${senderLabel}:`, margin, yPos)
-            yPos += 6
-
-            // Message Analysis (Segments: Code/Mermaid, HRs, and Text)
-            // Splitting by Mermaid, Code, or thematic breaks (--- *** ___)
-            const segments = msg.text.split(/(```[\s\S]*?```|\n---\n|\n\*\*\*\n|\n___\n)/g)
-            const restrictedWidth = pageWidth - margin - contentIndent - rightGap
-
-            const mermaidContainers = Array.from(messageElements[i]?.querySelectorAll('.mermaid-container') || [])
-            let mermaidIdx = 0
-
-            for (const segment of segments) {
-                if (!segment || !segment.trim()) continue
-
-                if (segment.startsWith('```mermaid')) {
-                    // Mermaid Diagram with Semantic Spacing
-                    const container = mermaidContainers[mermaidIdx++]
-                    if (container) {
-                        try {
-                            const canvas = await html2canvas(container, { scale: 2, logging: false, useCORS: true })
-                            const imgData = canvas.toDataURL('image/png')
-                            const imgWidth = restrictedWidth
-                            const imgHeight = canvas.width > 0 ? (canvas.height * imgWidth) / canvas.width : 0
-
-                            if (imgHeight > 0) {
-                                if (yPos + imgHeight > pageHeight - 20) {
-                                    doc.addPage()
-                                    yPos = 30
-                                }
-
-                                doc.addImage(imgData, 'PNG', margin + contentIndent, yPos, imgWidth, imgHeight)
-                                yPos += imgHeight + 10 // Extra spacing for grouping
-                            }
-                        } catch (e) {
-                            console.error("PDF: Mermaid failed", e)
-                        }
-                    }
-                } else if (segment.startsWith('```')) {
-                    // ASCII/Code Block with Courier
-                    const code = segment.replace(/```\w*\n?/, '').replace(/```$/, '')
-                    doc.setFont("courier", "normal").setFontSize(7).setTextColor(30)
-
-                    yPos += 2 // Padding before block
-                    const codeLines = code.split('\n')
-                    codeLines.forEach(rawLine => {
-                        // Use helper to ensure no run-on lines and update yPos
-                        yPos = addWrappedText(doc, rawLine, margin + contentIndent, restrictedWidth, yPos, 4.5)
-                    })
-                    yPos += 6 // Strategic gap after code block
-                } else if (segment.match(/^\n?(---|\*\*\*|___)\n?$/)) {
-                    // Visual Separator (Horizontal Rule)
-                    yPos += 2
-                    doc.setDrawColor(200)
-                    doc.line(margin + contentIndent, yPos, margin + contentIndent + restrictedWidth, yPos)
-                    yPos += 8
-                } else {
-                    // Standard Text with Paragraph Detection
-                    const cleanSegment = segment.replace(/[*_#]/g, '').replace(/`/g, '')
-                    const paragraphs = cleanSegment.split('\n\n')
-
-                    doc.setFont("helvetica", "normal").setFontSize(8).setTextColor(30)
-
-                    paragraphs.forEach((para, pIdx) => {
-                        if (!para.trim()) return
-
-                        // Use helper to avoid overflow and update yPos
-                        yPos = addWrappedText(doc, para.trim(), margin + contentIndent, restrictedWidth, yPos, 5)
-
-                        // Standard paragraph gap (double spacing)
-                        if (pIdx < paragraphs.length - 1) yPos += 5
-                    })
-                }
-            }
-
-            yPos += 4 // Spacing between messages
-        }
-
-        doc.save("ai10x-strategy-report.pdf")
+        await generateChatPDF(messages)
     }
 
     const handleCopy = (text, id) => {
