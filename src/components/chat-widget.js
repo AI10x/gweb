@@ -47,6 +47,9 @@ const ChatWidget = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [copiedId, setCopiedId] = useState(null)
     const [verifiedAddress, setVerifiedAddress] = useState(null)
+    const [dimensions, setDimensions] = useState({ width: 600, height: 600 })
+    const [isResizing, setIsResizing] = useState(false)
+    const resizeRef = useRef(null)
     const messagesEndRef = useRef(null)
 
     const thoughts = [
@@ -299,9 +302,69 @@ const ChatWidget = () => {
         }
     }
 
+    const startResizing = (e) => {
+        e.preventDefault()
+        setIsResizing(true)
+    }
+
+    const stopResizing = () => {
+        setIsResizing(false)
+    }
+
+    const resize = (e) => {
+        if (isResizing) {
+            // Since the widget is fixed to bottom-right, 
+            // dragging top-left handle means:
+            // newWidth = currentRight - mouseX
+            // newHeight = currentBottom - mouseY
+
+            const windowWidth = window.innerWidth
+            const windowHeight = window.innerHeight
+
+            // Assuming 2rem (32px) margins as per CSS
+            const margin = 32
+
+            const newWidth = Math.max(320, windowWidth - e.clientX - margin)
+            const newHeight = Math.max(400, windowHeight - e.clientY - margin - 80) // 80 for toggle button space
+
+            setDimensions({
+                width: newWidth,
+                height: newHeight
+            })
+        }
+    }
+
+    useEffect(() => {
+        if (isResizing) {
+            window.addEventListener('mousemove', resize)
+            window.addEventListener('mouseup', stopResizing)
+        } else {
+            window.removeEventListener('mousemove', resize)
+            window.removeEventListener('mouseup', stopResizing)
+        }
+        return () => {
+            window.removeEventListener('mousemove', resize)
+            window.removeEventListener('mouseup', stopResizing)
+        }
+    }, [isResizing])
+
     return (
         <div className="chat-widget-container">
-            <div className={`chat-window ${isOpen ? "" : "closed"}`}>
+            <div
+                className={`chat-window ${isOpen ? "" : "closed"}`}
+                style={{
+                    width: isOpen ? `${dimensions.width}px` : undefined,
+                    height: isOpen ? `${dimensions.height}px` : undefined
+                }}
+            >
+                <div className="resize-handle" onMouseDown={startResizing}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <polyline points="9 21 3 21 3 15"></polyline>
+                        <line x1="21" y1="3" x2="14" y2="10"></line>
+                        <line x1="3" y1="21" x2="10" y2="14"></line>
+                    </svg>
+                </div>
                 <div className="chat-header">
                     <div className="chat-header-info">
                         <span className="chat-header-title">Premium Support</span>
