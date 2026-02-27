@@ -8,6 +8,7 @@ import Avatar from "./avatar"
 import "./chat-widget.css"
 import { fetchGroqCompletion } from "../services/groq"
 import { fetchAdditionalApiCompletion } from "../services/api-service"
+import { extractTextFromPDF } from "../utils/pdf-parser"
 import AI10xIcon from "../images/ai10x-icon.png"
 
 const SYSTEM_PROMPT = `**Role:** You are an expert Lean Startup Strategist and Venture Capital Analyst with a deep understanding of Ash Maurya’s Lean Canvas framework.
@@ -97,24 +98,58 @@ const ChatWidget = () => {
 
         const newAttachments = []
 
-        files.forEach(file => {
+        files.forEach(async (file) => {
             const reader = new FileReader()
-            reader.onload = (e) => {
-                newAttachments.push({
-                    id: Date.now() + Math.random(),
-                    file: file,
-                    path: file.webkitRelativePath || file.name,
-                    preview: e.target.result,
-                    type: file.type.startsWith('image/') ? 'image' : 'text'
-                })
 
-                if (newAttachments.length === files.length) {
-                    setAttachments(prev => [...prev, ...newAttachments])
+            if (file.type === 'application/pdf') {
+                reader.onload = async (e) => {
+                    try {
+                        const pdfText = await extractTextFromPDF(e.target.result)
+                        newAttachments.push({
+                            id: Date.now() + Math.random(),
+                            file: file,
+                            path: file.webkitRelativePath || file.name,
+                            preview: pdfText,
+                            type: 'pdf'
+                        })
+                    } catch (err) {
+                        console.error("PDF parsing failed:", err)
+                    }
+
+                    if (newAttachments.length === files.length) {
+                        setAttachments(prev => [...prev, ...newAttachments])
+                    }
                 }
-            }
-            if (file.type.startsWith('image/')) {
+                reader.readAsArrayBuffer(file)
+            } else if (file.type.startsWith('image/')) {
+                reader.onload = (e) => {
+                    newAttachments.push({
+                        id: Date.now() + Math.random(),
+                        file: file,
+                        path: file.webkitRelativePath || file.name,
+                        preview: e.target.result,
+                        type: 'image'
+                    })
+
+                    if (newAttachments.length === files.length) {
+                        setAttachments(prev => [...prev, ...newAttachments])
+                    }
+                }
                 reader.readAsDataURL(file)
             } else {
+                reader.onload = (e) => {
+                    newAttachments.push({
+                        id: Date.now() + Math.random(),
+                        file: file,
+                        path: file.webkitRelativePath || file.name,
+                        preview: e.target.result,
+                        type: 'text'
+                    })
+
+                    if (newAttachments.length === files.length) {
+                        setAttachments(prev => [...prev, ...newAttachments])
+                    }
+                }
                 reader.readAsText(file)
             }
         })
@@ -164,9 +199,10 @@ const ChatWidget = () => {
                                 }
                             })
                         } else {
+                            const prefix = att.type === 'pdf' ? '[PDF CONTENT]' : ''
                             content.push({
                                 type: "text",
-                                text: `\n--- START OF FILE: ${filePath} ---\n${att.preview}\n--- END OF FILE: ${filePath} ---\n`
+                                text: `\n--- START OF FILE: ${filePath} ---\n${prefix}\n${att.preview}\n--- END OF FILE: ${filePath} ---\n`
                             })
                         }
                     })
@@ -363,7 +399,10 @@ const ChatWidget = () => {
                                                 <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
                                                 <polyline points="13 2 13 9 20 9"></polyline>
                                             </svg>
-                                            <span title={att.path || att.file.name}>{att.file.name}</span>
+                                            <span title={att.path || att.file.name}>
+                                                {att.file.name}
+                                                {att.type === 'pdf' && <small style={{ display: 'block', fontSize: '10px', opacity: 0.7 }}>(PDF)</small>}
+                                            </span>
                                         </div>
                                     )}
                                     <button
@@ -384,7 +423,7 @@ const ChatWidget = () => {
                             onChange={handleFileSelect}
                             style={{ display: 'none' }}
                             multiple
-                            accept="image/*,text/*,.txt,.md,.js,.py,.json"
+                            accept="image/*,text/*,.txt,.md,.js,.py,.json,.pdf,application/pdf"
                         />
                         <input
                             type="file"
