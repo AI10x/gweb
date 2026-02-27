@@ -1,10 +1,10 @@
 import * as pdfjs from 'pdfjs-dist';
 
-// Set worker source for pdf.js
-// In a Gatsby/Webpack environment, we might need to handle this differently
-// but usually this works if the package is installed.
-if (typeof window !== 'undefined' && !pdfjs.GlobalWorkerOptions.workerSrc) {
-    pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+// Use jsdelivr CDN for the worker - consistent with version 4.x
+if (typeof window !== 'undefined') {
+    const v = pdfjs.version || '4.10.38';
+    pdfjs.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${v}/build/pdf.worker.min.mjs`;
+    console.log(`PDF.js worker source set to: ${pdfjs.GlobalWorkerOptions.workerSrc}`);
 }
 
 /**
@@ -13,23 +13,45 @@ if (typeof window !== 'undefined' && !pdfjs.GlobalWorkerOptions.workerSrc) {
  * @returns {Promise<string>} The extracted text.
  */
 export const extractTextFromPDF = async (arrayBuffer) => {
+    console.log("extractTextFromPDF: starting parsing", arrayBuffer.byteLength, "bytes");
+
+    if (!arrayBuffer || arrayBuffer.byteLength === 0) {
+        throw new Error("Invalid PDF data: ArrayBuffer is empty");
+    }
+
     try {
-        const loadingTask = pdfjs.getDocument({ data: arrayBuffer });
+        const loadingTask = pdfjs.getDocument({
+            data: arrayBuffer,
+            useWorkerFetch: true,
+            isEvalSupported: false,
+        });
+
         const pdf = await loadingTask.promise;
+        console.log(`PDF successfully loaded: ${pdf.numPages} pages`);
+
         let fullText = '';
 
         for (let i = 1; i <= pdf.numPages; i++) {
+            console.log(`Extracting text from page ${i}...`);
             const page = await pdf.getPage(i);
             const textContent = await page.getTextContent();
             const pageText = textContent.items
                 .map((item) => item.str)
                 .join(' ');
+
             fullText += `--- Page ${i} ---\n${pageText}\n\n`;
         }
 
-        return fullText.trim();
+        const trimmedText = fullText.trim();
+        if (!trimmedText) {
+            console.warn("PDF extraction returned empty text. PDF might be scanned/image-based.");
+            return "Note: This PDF appears to contain no selectable text (it might be a scanned image).";
+        }
+
+        console.log(`Extraction complete. Total characters: ${trimmedText.length}`);
+        return trimmedText;
     } catch (error) {
-        console.error('Error extracting text from PDF:', error);
-        throw new Error('Failed to parse PDF file');
+        console.error('CRITICAL: Error in extractTextFromPDF:', error);
+        throw error;
     }
 };

@@ -92,67 +92,69 @@ const ChatWidget = () => {
     const fileInputRef = useRef(null)
     const folderInputRef = useRef(null)
 
-    const handleFileSelect = (e) => {
+    const handleFileSelect = async (e) => {
         const files = Array.from(e.target.files)
         if (files.length === 0) return
 
-        const newAttachments = []
+        console.log("Files selected:", files.map(f => `${f.name} (${f.type})`))
 
-        files.forEach(async (file) => {
-            const reader = new FileReader()
+        const processFile = (file) => {
+            return new Promise((resolve) => {
+                const reader = new FileReader()
 
-            if (file.type === 'application/pdf') {
-                reader.onload = async (e) => {
-                    try {
-                        const pdfText = await extractTextFromPDF(e.target.result)
-                        newAttachments.push({
+                if (file.type === 'application/pdf') {
+                    console.log(`Processing PDF: ${file.name}`)
+                    reader.onload = async (e) => {
+                        try {
+                            const pdfText = await extractTextFromPDF(e.target.result)
+                            console.log(`Successfully extracted text from ${file.name} (${pdfText.length} chars)`)
+                            resolve({
+                                id: Date.now() + Math.random(),
+                                file: file,
+                                path: file.webkitRelativePath || file.name,
+                                preview: pdfText,
+                                type: 'pdf'
+                            })
+                        } catch (err) {
+                            console.error(`PDF parsing failed for ${file.name}:`, err)
+                            resolve(null)
+                        }
+                    }
+                    reader.readAsArrayBuffer(file)
+                } else if (file.type.startsWith('image/')) {
+                    reader.onload = (e) => {
+                        resolve({
                             id: Date.now() + Math.random(),
                             file: file,
                             path: file.webkitRelativePath || file.name,
-                            preview: pdfText,
-                            type: 'pdf'
+                            preview: e.target.result,
+                            type: 'image'
                         })
-                    } catch (err) {
-                        console.error("PDF parsing failed:", err)
                     }
-
-                    if (newAttachments.length === files.length) {
-                        setAttachments(prev => [...prev, ...newAttachments])
+                    reader.readAsDataURL(file)
+                } else {
+                    reader.onload = (e) => {
+                        resolve({
+                            id: Date.now() + Math.random(),
+                            file: file,
+                            path: file.webkitRelativePath || file.name,
+                            preview: e.target.result,
+                            type: 'text'
+                        })
                     }
+                    reader.readAsText(file)
                 }
-                reader.readAsArrayBuffer(file)
-            } else if (file.type.startsWith('image/')) {
-                reader.onload = (e) => {
-                    newAttachments.push({
-                        id: Date.now() + Math.random(),
-                        file: file,
-                        path: file.webkitRelativePath || file.name,
-                        preview: e.target.result,
-                        type: 'image'
-                    })
+            })
+        }
 
-                    if (newAttachments.length === files.length) {
-                        setAttachments(prev => [...prev, ...newAttachments])
-                    }
-                }
-                reader.readAsDataURL(file)
-            } else {
-                reader.onload = (e) => {
-                    newAttachments.push({
-                        id: Date.now() + Math.random(),
-                        file: file,
-                        path: file.webkitRelativePath || file.name,
-                        preview: e.target.result,
-                        type: 'text'
-                    })
-
-                    if (newAttachments.length === files.length) {
-                        setAttachments(prev => [...prev, ...newAttachments])
-                    }
-                }
-                reader.readAsText(file)
-            }
-        })
+        try {
+            const results = await Promise.all(files.map(processFile))
+            const validAttachments = results.filter(att => att !== null)
+            console.log(`Adding ${validAttachments.length} attachments to state`)
+            setAttachments(prev => [...prev, ...validAttachments])
+        } catch (err) {
+            console.error("Error processing files:", err)
+        }
 
         // Clear input so same file can be selected again if needed
         e.target.value = null
