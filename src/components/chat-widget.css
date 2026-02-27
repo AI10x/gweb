@@ -44,16 +44,16 @@
 }
 
 .chat-window {
-    width: 450px;
+    width: 600px;
     max-width: 90vw;
     height: 600px;
     max-height: 80vh;
-    background: rgba(var(--bg-rgb, 255, 255, 255), 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--border-color);
+    background: rgba(var(--bg-rgb, 255, 255, 255), 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(var(--bg-rgb, 255, 255, 255), 0.2);
     border-radius: 1.5rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -70,7 +70,8 @@
 
 .chat-header {
     padding: 1rem 1.5rem;
-    background: linear-gradient(90deg, #00f2fe 0%, #4facfe 100%);
+    background: linear-gradient(90deg, rgba(0, 242, 254, 0.6) 0%, rgba(79, 172, 254, 0.6) 100%);
+    backdrop-filter: blur(8px);
     color: white;
     display: flex;
     align-items: center;
@@ -160,12 +161,13 @@
 
 .message-received {
     align-self: flex-start;
-    background: var(--pre-bg);
+    background: rgba(var(--bg-rgb, 240, 240, 240), 0.5);
     color: var(--text-color);
     border-bottom-left-radius: 0.25rem;
     display: flex;
     gap: 0.75rem;
     align-items: flex-start;
+    backdrop-filter: blur(4px);
 }
 
 .message-avatar {
@@ -400,14 +402,15 @@
 
 .chat-input {
     flex: 1;
-    background: rgba(var(--bg-rgb, 255, 255, 255), 0.5);
-    border: 1px solid var(--border-color);
+    background: rgba(var(--bg-rgb, 255, 255, 255), 0.3);
+    border: 1px solid rgba(var(--bg-rgb, 255, 255, 255), 0.2);
     border-radius: 2rem;
     padding: 0.5rem 1rem;
     outline: none;
     font-size: 0.9rem;
-    transition: border-color 0.2s;
+    transition: all 0.2s;
     color: var(--text-color);
+    backdrop-filter: blur(4px);
 }
 
 .chat-input:focus {
