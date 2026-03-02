@@ -39,7 +39,7 @@ When a user provides their canvas data, evaluate it based on the following:
 const ChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false)
     const [messages, setMessages] = useState([
-        { id: 1, text: "Hello! How can I help you today?", sender: "support" },
+        { id: 1, text: "Hello! How can I help you today? If'd you like deeper insights, please consider supporting our work — by finding us on the unstoppable domains App — ai10x.org Additionally, our finance page can be found on ud.me/ai10x.org" },
     ])
     const [inputValue, setInputValue] = useState("")
     const [thought, setThought] = useState("Need help?")
@@ -53,10 +53,10 @@ const ChatWidget = () => {
     const messagesEndRef = useRef(null)
 
     const thoughts = [
-        "Design thinking toolbox? Donate at - https://ud.me/ai10x.org",
-        "I'm here for your team! Donate at - https://ud.me/ai10x.org",
-        "Lean startup? Donate at - https://ud.me/ai10x.org",
-        "MVP (minimum vaiable product)? Donate at - https://ud.me/ai10x.org",
+        "Design thinking toolbox? If'd you like deeper insights, please consider supporting our work — by finding us on the unstoppable domains App — ai10x.org",
+        "I'm here for your team! If'd you like deeper insights, find us on the unstoppable domains App — ai10x.org",
+        "Lean startup? If'd you like deeper insights, please consider supporting our work — by finding us on the unstoppable domains App — ai10x.org",
+        "MVP (minimum vaiable product)? If'd you like deeper insights, please consider supporting our work — by finding us on the unstoppable domains App — ai10x.org",
     ]
 
     useEffect(() => {
