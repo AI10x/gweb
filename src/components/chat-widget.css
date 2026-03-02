@@ -349,7 +349,7 @@
 .attachment-button {
     background: transparent;
     border: none;
-    color: #888;
+    color: black;
     cursor: pointer;
     display: flex;
     align-items: center;
