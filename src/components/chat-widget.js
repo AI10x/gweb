@@ -54,7 +54,7 @@ const ChatWidget = () => {
 
     const thoughts = [
         "Design thinking toolbox?",
-        "vertically integrated insights, goto the unstoppable domains App — ai10x.org",
+        "Vertical insights, goto the unstoppable domains App — ai10x.org",
         "Lean startup?",
         "MVP (minimum vaiable product)?",
     ]
