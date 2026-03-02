@@ -53,10 +53,10 @@ const ChatWidget = () => {
     const messagesEndRef = useRef(null)
 
     const thoughts = [
-        "Design thinking toolbox? If'd you like deeper insights, please consider supporting our work — by finding us on the unstoppable domains App — ai10x.org",
-        "I'm here for your team! If'd you like deeper insights, find us on the unstoppable domains App — ai10x.org",
-        "Lean startup? If'd you like deeper insights, please consider supporting our work — by finding us on the unstoppable domains App — ai10x.org",
-        "MVP (minimum vaiable product)? If'd you like deeper insights, please consider supporting our work — by finding us on the unstoppable domains App — ai10x.org",
+        "Design thinking toolbox?",
+        "If'd you like deeper insights, find us on the unstoppable domains App — ai10x.org",
+        "Lean startup?",
+        "MVP (minimum vaiable product)?",
     ]
 
     useEffect(() => {
