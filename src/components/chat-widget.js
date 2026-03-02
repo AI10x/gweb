@@ -57,6 +57,7 @@ const ChatWidget = () => {
         "Vertical insights, goto the unstoppable domains App — ai10x.org",
         "Lean startup?",
         "MVP (minimum vaiable product)?",
+        "Founding team? - message at unstoppable domains App — ai10x.org",
     ]
 
     useEffect(() => {
