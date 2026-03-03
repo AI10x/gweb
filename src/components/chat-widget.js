@@ -49,6 +49,7 @@ const ChatWidget = () => {
     const [verifiedAddress, setVerifiedAddress] = useState(null)
     const [dimensions, setDimensions] = useState({ width: 600, height: 600 })
     const [isResizing, setIsResizing] = useState(false)
+    const [userMessageCount, setUserMessageCount] = useState(0)
     const resizeRef = useRef(null)
     const messagesEndRef = useRef(null)
 
@@ -184,6 +185,7 @@ const ChatWidget = () => {
         setInputValue("")
         setAttachments([])
         setIsLoading(true)
+        setUserMessageCount(prev => prev + 1)
 
         try {
             // Limit message history to reduce payload size
@@ -236,15 +238,18 @@ const ChatWidget = () => {
             })
 
             let response
-            if (verifiedAddress) {
+            if (verifiedAddress && userMessageCount >= 4) {
                 try {
-                    console.log("Attempting additional API with address:", verifiedAddress)
-                    response = await fetchAdditionalApiCompletion(apiMessages, verifiedAddress, SYSTEM_PROMPT)
+                    console.log("Attempting additional API with address:", verifiedAddress, "- User msg count:", userMessageCount + 1)
+                    // We prompt the compound model to separate Market Research so we can style it.
+                    const specPrompt = SYSTEM_PROMPT + `\n\nCRITICAL OUTPUT FORMATTING: Ensure your response has two separate text outputs (paragraphs) separated by a large white space (e.g. padding). Title the second output "Market Research". Wrap the entire second output (including the title) inside a markdown blockquote like this: > [!MARKET_RESEARCH] so the frontend can style it darkly.`;
+                    response = await fetchAdditionalApiCompletion(apiMessages, verifiedAddress, specPrompt)
                 } catch (apiError) {
                     console.error("Additional API failed, falling back to Groq:", apiError)
                     response = await fetchGroqCompletion(apiMessages, SYSTEM_PROMPT)
                 }
             } else {
+                console.log("Using standard Groq API. Verified:", !!verifiedAddress, "Msg Count:", userMessageCount + 1)
                 response = await fetchGroqCompletion(apiMessages, SYSTEM_PROMPT)
             }
 
@@ -429,6 +434,27 @@ const ChatWidget = () => {
                                                 </code>
                                             )
                                         },
+                                        blockquote({ node, children, ...props }) {
+                                            // Check if it's our custom [!MARKET_RESEARCH] block
+                                            const textContent = node.children.map(c => c.value || (c.children && c.children[0]?.value) || '').join('');
+                                            if (textContent.includes('[!MARKET_RESEARCH]')) {
+                                                // Remove the tag from the rendered output
+                                                return (
+                                                    <div style={{
+                                                        backgroundColor: '#1a202c',
+                                                        color: '#e2e8f0',
+                                                        padding: '1.5rem',
+                                                        borderRadius: '8px',
+                                                        marginTop: '2rem',
+                                                        borderLeft: '4px solid #4299e1',
+                                                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                                                    }}>
+                                                        {children}
+                                                    </div>
+                                                );
+                                            }
+                                            return <blockquote {...props}>{children}</blockquote>;
+                                        }
                                     }}
                                 >
                                     {msg.text}

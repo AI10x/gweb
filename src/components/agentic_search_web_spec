@@ -1,0 +1,3 @@
+#create two seprate text outputs (parahraph seperater by a large white space titled by "market research") for the mcp search in additionalApiCompletion
+#make the second text output dark in color
+#add a iff condition based on the end-users frequency of messages iff the user has sent greater than 4 messages, use the groq/compound web/search tool (fetchadditionalapicompletion), else fallback on the default fetchgroqcompletion
