@@ -1,3 +1,5 @@
+import Groq from "groq-sdk";
+
 export const fetchAdditionalApiCompletion = async (messages, address) => {
     const apiUrl = process.env.GATSBY_ADDITIONAL_API_URL || "";
 
@@ -48,6 +50,27 @@ export const fetchAdditionalApiCompletion = async (messages, address) => {
         return data.choices[0].message;
     } catch (error) {
         console.error("Error in fetchAdditionalApiCompletion:", error);
+        throw error;
+    }
+};
+
+export const fetchMcpSearchCompletion = async (messages) => {
+    const groq = new Groq({
+        apiKey: process.env.GATSBY_GROQ_API_KEY,
+        dangerouslyAllowBrowser: true
+    });
+
+    try {
+        console.log("Calling Groq MCP Search API...");
+        const response = await groq.chat.completions.create({
+            model: "groq/compound",
+            messages: messages,
+        });
+
+        console.log("Groq MCP Search success response");
+        return response.choices[0].message;
+    } catch (error) {
+        console.error("Error in fetchMcpSearchCompletion:", error);
         throw error;
     }
 };
