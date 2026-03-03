@@ -186,7 +186,10 @@ const ChatWidget = () => {
         setIsLoading(true)
 
         try {
-            const apiMessages = newMessages.map((msg) => {
+            // Limit message history to reduce payload size
+            const messagesToProcess = newMessages.slice(-10);
+
+            const apiMessages = messagesToProcess.map((msg) => {
                 const role = msg.sender === "user" ? "user" : "assistant"
 
                 if (msg.attachments && msg.attachments.length > 0) {
@@ -206,9 +209,16 @@ const ChatWidget = () => {
                             })
                         } else {
                             const prefix = att.type === 'pdf' ? '[PDF CONTENT]' : ''
+                            // Truncate large text attachments (approx 20k chars limit)
+                            const maxChars = 20000;
+                            let truncatedContent = att.preview;
+                            if (truncatedContent && truncatedContent.length > maxChars) {
+                                truncatedContent = truncatedContent.substring(0, maxChars) + "\n... [CONTENT TRUNCATED DUE TO SIZE] ...";
+                            }
+
                             content.push({
                                 type: "text",
-                                text: `\n--- START OF FILE: ${filePath} ---\n${prefix}\n${att.preview}\n--- END OF FILE: ${filePath} ---\n`
+                                text: `\n--- START OF FILE: ${filePath} ---\n${prefix}\n${truncatedContent}\n--- END OF FILE: ${filePath} ---\n`
                             })
                         }
                     })
@@ -229,7 +239,7 @@ const ChatWidget = () => {
             if (verifiedAddress) {
                 try {
                     console.log("Attempting additional API with address:", verifiedAddress)
-                    response = await fetchAdditionalApiCompletion(apiMessages, verifiedAddress)
+                    response = await fetchAdditionalApiCompletion(apiMessages, verifiedAddress, SYSTEM_PROMPT)
                 } catch (apiError) {
                     console.error("Additional API failed, falling back to Groq:", apiError)
                     response = await fetchGroqCompletion(apiMessages, SYSTEM_PROMPT)
