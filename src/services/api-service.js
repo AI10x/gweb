@@ -1,6 +1,6 @@
 import Groq from "groq-sdk";
 
-export const fetchAdditionalApiCompletion = async (messages, address) => {
+export const fetchAdditionalApiCompletion = async (messages) => {
     const apiUrl = process.env.GATSBY_ADDITIONAL_API_URL || "";
 
     // Extract prompt safely, handling both string and array content (multi-modal)
@@ -15,7 +15,6 @@ export const fetchAdditionalApiCompletion = async (messages, address) => {
 
     const payload = {
         messages: messages,
-        address: address,
         prompt: promptText
     };
 
