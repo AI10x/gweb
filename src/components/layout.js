@@ -74,6 +74,11 @@ const Layout = ({ children }) => {
         </div>
       )}
       <BackgroundVideo />
+      <div className="bottom-banner">
+        <div className="banner-content">
+          <span>AI10x: Leading the way in agentic AI solutions and bespoke software development.</span>
+        </div>
+      </div>
       {!isMinimalMode && <Header siteTitle={data.site.siteMetadata.title} />}
       <div
         style={{
