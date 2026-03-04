@@ -76,7 +76,7 @@ const Layout = ({ children }) => {
       <BackgroundVideo />
       <div className="bottom-banner">
         <div className="banner-content">
-          <span>AI10x: Leading the way in agentic AI solutions and bespoke software development.</span>
+          <span>AI10x: Iterate Faster, Own the Future – Web 3‑Connected-wallet Design‑Thinking Toolbox.</span>
         </div>
       </div>
       {!isMinimalMode && <Header siteTitle={data.site.siteMetadata.title} />}
