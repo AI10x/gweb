@@ -12,7 +12,6 @@ import { useStaticQuery, graphql } from "gatsby"
 import Header from "./header"
 import ChatWidget from "./chat-widget"
 import BackgroundVideo from "./video-background"
-import MermaidDiagram from "./mermaid-diagram"
 import "./layout.css"
 
 const Layout = ({ children }) => {
@@ -81,23 +80,27 @@ const Layout = ({ children }) => {
         </div>
       </div>
       <div className="diagram-section">
-        <MermaidDiagram chart={`
-graph LR
-    subgraph AI10xTech_Branding["AI10xTech Branding"]
-    W["Web3 Wallets"] --> DT["Design Thinking"]
-    DT --> LMC["Lean Model Canvas"]
-    LMC --> GFI["Groq Fast Inference"]
-    GFI --> OWLLM["Open Weight LLMs"]
-    OWLLM --> DT
-    end
-    
-    style W fill:#3b82f6,color:#fff,stroke-width:2px,stroke:#fff
-    style DT fill:#10b981,color:#fff,stroke-width:2px,stroke:#fff
-    style LMC fill:#f59e0b,color:#fff,stroke-width:2px,stroke:#fff
-    style GFI fill:#ef4444,color:#fff,stroke-width:2px,stroke:#fff
-    style OWLLM fill:#8b5cf6,color:#fff,stroke-width:2px,stroke:#fff
-    style AI10xTech_Branding fill:rgba(255,255,255,0.05),stroke:#fff,stroke-dasharray: 5 5
-        `} />
+        <div className="flowchart-container">
+          <div className="flowchart-node node-web3">
+            <div className="node-icon">🌐</div>
+            <div className="node-text">Web3 Wallets</div>
+          </div>
+          <div className="flowchart-connector"></div>
+          <div className="flowchart-node node-llm">
+            <div className="node-icon">🧠</div>
+            <div className="node-text">Open Weight LLMs</div>
+          </div>
+          <div className="flowchart-connector"></div>
+          <div className="flowchart-node node-groq">
+            <div className="node-icon">⚡</div>
+            <div className="node-text">Groq Fast Inference</div>
+          </div>
+          <div className="flowchart-connector"></div>
+          <div className="flowchart-node node-dt">
+            <div className="node-icon">🎨</div>
+            <div className="node-text">Design Thinking & Lean Canvas</div>
+          </div>
+        </div>
       </div>
       {!isMinimalMode && <Header siteTitle={data.site.siteMetadata.title} />}
       <div

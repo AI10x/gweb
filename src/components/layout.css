@@ -867,31 +867,133 @@ pre tt:after {
 .diagram-section {
   position: relative;
   z-index: 400;
-  margin: 2rem auto 80px auto;
-  /* 80px bottom margin to clear the fixed banner */
-  padding: 2rem;
-  max-width: 960px;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
+  margin: 2rem auto 100px auto;
+  padding: 3rem 1.5rem;
+  max-width: 1000px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  animation: diagramFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.flowchart-container {
   display: flex;
-  justify-content: center;
   align-items: center;
-  animation: diagramFadeIn 1.5s ease-out;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+}
+
+.flowchart-node {
+  flex: 1;
+  min-width: 150px;
+  padding: 1.5rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  text-align: center;
+  transition: all 0.4s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: default;
+}
+
+.flowchart-node:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-5px);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.node-icon {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+}
+
+.node-text {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: white;
+  line-height: 1.3;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Node specific accents */
+.node-web3 {
+  border-bottom: 3px solid #3b82f6;
+}
+
+.node-llm {
+  border-bottom: 3px solid #8b5cf6;
+}
+
+.node-groq {
+  border-bottom: 3px solid #ef4444;
+}
+
+.node-dt {
+  border-bottom: 3px solid #10b981;
+}
+
+.flowchart-connector {
+  flex: 0 0 40px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.1));
+  position: relative;
+}
+
+.flowchart-connector::after {
+  content: '';
+  position: absolute;
+  right: -5px;
+  top: -4px;
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 8px solid rgba(255, 255, 255, 0.5);
 }
 
 @keyframes diagramFadeIn {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: translateY(30px);
   }
 
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 900px) {
+  .flowchart-container {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .flowchart-connector {
+    width: 2px;
+    height: 40px;
+    flex: 0 0 40px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.1));
+  }
+
+  .flowchart-connector::after {
+    right: -4px;
+    bottom: -5px;
+    top: auto;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 8px solid rgba(255, 255, 255, 0.5);
   }
 }
 
