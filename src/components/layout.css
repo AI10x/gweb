@@ -24,7 +24,8 @@
   position: relative;
   min-height: 100vh;
   width: 100vw;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .video-background-container {
@@ -106,7 +107,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 article,
@@ -860,4 +862,47 @@ pre tt:after {
     opacity: 0.9;
     transform: translateY(0);
   }
+}
+
+.diagram-section {
+  position: relative;
+  z-index: 400;
+  margin: 2rem auto 80px auto;
+  /* 80px bottom margin to clear the fixed banner */
+  padding: 2rem;
+  max-width: 960px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: diagramFadeIn 1.5s ease-out;
+}
+
+@keyframes diagramFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.mermaid-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Custom Mermaid Theme Overrides */
+.mermaid svg {
+  max-width: 100% !important;
+  height: auto !important;
 }
