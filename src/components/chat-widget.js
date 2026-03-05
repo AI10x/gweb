@@ -355,7 +355,7 @@ const ChatWidget = () => {
     }
 
     const handleCopy = (text, id) => {
-        if (navigator.clipboard) {
+        if (typeof window !== 'undefined' && navigator.clipboard) {
             navigator.clipboard.writeText(text).then(() => {
                 setCopiedId(id)
                 setTimeout(() => setCopiedId(null), 2000)

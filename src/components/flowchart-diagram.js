@@ -1,12 +1,13 @@
 import React, { useEffect, useRef } from 'react';
-import flowchart from 'flowchart.js';
+
 
 const FlowchartDiagram = ({ chart }) => {
     const ref = useRef(null);
 
     useEffect(() => {
-        if (ref.current && chart) {
+        if (ref.current && chart && typeof window !== 'undefined') {
             try {
+                const flowchart = require('flowchart.js');
                 ref.current.innerHTML = '';
                 const diagram = flowchart.parse(chart);
                 diagram.drawSVG(ref.current, {

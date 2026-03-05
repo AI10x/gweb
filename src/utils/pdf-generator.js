@@ -1,5 +1,4 @@
-import { jsPDF } from "jspdf"
-import html2canvas from "html2canvas"
+
 
 // Helper to add wrapped text without overflow and return updated yPos
 // Automatically handles page breaks and respects margins.
@@ -18,6 +17,11 @@ function addWrappedText(doc, text, x, maxWidth, yPos, lineHeight = 6.5, margin =
 }
 
 export async function generateChatPDF(messages) {
+    if (typeof window === 'undefined') return;
+
+    const { jsPDF } = require('jspdf');
+    const html2canvas = require('html2canvas');
+
     // create document
     const doc = new jsPDF('p', 'mm', 'a3')
     const pageWidth = doc.internal.pageSize.getWidth()
