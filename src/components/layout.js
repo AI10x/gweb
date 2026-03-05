@@ -48,7 +48,7 @@ const Layout = ({ children }) => {
     }
 
     // Attempt to lock orientation if on mobile
-    if (isMobile && screen.orientation && screen.orientation.lock) {
+    if (typeof screen !== 'undefined' && isMobile && screen.orientation && screen.orientation.lock) {
       screen.orientation.lock("landscape").catch(err => {
         console.warn("Orientation lock failed:", err)
       })
