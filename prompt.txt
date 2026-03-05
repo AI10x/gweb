@@ -39,73 +39,22 @@ The canvas is shown in three formats so you can copy‑paste it into a spreadshe
 
 ---
 
-## 3️⃣ Mermaid Flow (visual of the model)
+## 3️⃣ Flowchart Flow (visual of the model)
 
-```mermaid
-flowchart TD
-    subgraph Problem["Problem"]
-        P1["No time to design workouts"]
-        P2["Progress not synced"]
-        P3["Trainer cost too high"]
-    end
+```flowchart
+st=>start: Start: Business Idea
+e=>end: Goal: Validated Pitch
+op1=>operation: Define Problem (No time, high cost)
+op2=>operation: Identify Customer Segments (Urban professionals)
+op3=>operation: Formulate Unique Value Proposition
+op4=>operation: Design Solution (AI routines, App)
+op5=>operation: Plan Channels (SEO, Ads, Partners)
+op6=>operation: Structure Revenue ($9.99/mo, B2B)
+op7=>operation: Analyze Cost Structure (AI, Marketing)
+op8=>operation: Track Key Metrics (CPA, Churn)
+op9=>operation: Determine Unfair Advantage (Patents, Data)
 
-    subgraph Customer["Customer Segments"]
-        CS1["Urban Professionals (25‑45)"]
-        CS2["Gym owners / Freelance trainers"]
-    end
-
-    subgraph UVP["Unique Value Proposition"]
-        UV["Fit in 15 min – AI‑personalized plans"]
-    end
-
-    subgraph Solution["Solution"]
-        S1["AI‑generated 15‑min routines"]
-        S2["Mobile app w/ video & auto‑track"]
-        S3["Trainer marketplace"]
-    end
-
-    subgraph Channels["Channels"]
-        C1["SEO (blog/YouTube)"]
-        C2["LinkedIn & Instagram ads"]
-        C3["Co‑working space partners"]
-    end
-
-    subgraph Revenue["Revenue Streams"]
-        R1["$9.99/mo individual"]
-        R2["$12/mo per employee (B2B)"]
-        R3["15% trainer commission"]
-    end
-
-    subgraph Cost["Cost Structure"]
-        Cost1["AI/Cloud (40%)"]
-        Cost2["Content production (20%)"]
-        Cost3["Marketing (25%)"]
-        Cost4["G&A (15%)"]
-    end
-
-    subgraph Metrics["Key Metrics (AARRR)"]
-        M1["Acquisition (CPA)"]
-        M2["Activation (first workout)"]
-        M3["Retention (30‑day churn)"]
-        M4["Referral (invite %)"]
-        M5["Revenue (MRR, LTV)"]
-    end
-
-    subgraph Advantage["Unfair Advantage"]
-        UA1["Patented AI model"]
-        UA2["Data network effect"]
-        UA3["Wearables integration"]
-    end
-
-    %% Relationships
-    Problem --> UV
-    Customer --> UV
-    UV --> Solution
-    Solution --> Channels
-    Channels --> Revenue
-    Revenue --> Cost
-    Cost --> Metrics
-    Metrics --> Advantage
+st->op1->op2->op3->op4->op5->op6->op7->op8->op9->e
 ```
 
 ---

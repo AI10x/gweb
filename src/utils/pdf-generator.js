@@ -68,14 +68,14 @@ export async function generateChatPDF(messages) {
 
         const segments = msg.text.split(/(```[\s\S]*?```|\n---\n|\n\*\*\*\n|\n___\n)/g)
         const restrictedWidth = usableWidth
-        const mermaidContainers = Array.from(messageElements[i]?.querySelectorAll('.mermaid-container') || [])
-        let mermaidIdx = 0
+        const flowchartContainers = Array.from(messageElements[i]?.querySelectorAll('.flowchart-container') || [])
+        let flowchartIdx = 0
 
         for (const segment of segments) {
             if (!segment || !segment.trim()) continue
 
-            if (segment.startsWith('```mermaid')) {
-                const container = mermaidContainers[mermaidIdx++]
+            if (segment.startsWith('```flowchart')) {
+                const container = flowchartContainers[flowchartIdx++]
                 if (container) {
                     try {
                         const canvas = await html2canvas(container, { scale: 2, logging: false, useCORS: true })
@@ -92,7 +92,7 @@ export async function generateChatPDF(messages) {
                             yPos += imgHeight + 10
                         }
                     } catch (e) {
-                        console.error("PDF: Mermaid failed", e)
+                        console.error("PDF: Flowchart capture failed", e)
                     }
                 }
             } else if (segment.startsWith('```')) {

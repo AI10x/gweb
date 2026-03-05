@@ -41,3 +41,29 @@ export const fetchAdditionalApiCompletion = async (messages, address, systemProm
         throw error;
     }
 };
+
+export const fetchFlowchartCompletion = async (messages) => {
+    const summaryPrompt = `You are an expert system architect and visualizer.
+Your objective is to review the entire prior conversation context and output a concise summary as an ASCII flowchart block diagram.
+IMPORTANT: You MUST ONLY output strict flowchart.js syntax (e.g., \`st=>start: Start\`), enclosed in a markdown code block with the \`flowchart\` language identifier (i.e., \`\`\`flowchart ... \`\`\`). Do NOT output any other text, explanations, or markdown outside the code block.`;
+
+    console.log("Calling API to generate flowchart from context");
+
+    try {
+        const apiMessages = [
+            { role: "system", content: summaryPrompt },
+            ...messages,
+            { role: "user", content: "Please summarize our entire conversation above into an ASCII flowchart block diagram using flowchart.js syntax. Output ONLY the markdown code block." }
+        ];
+
+        const response = await groq.chat.completions.create({
+            model: "groq/compound", // Assuming this is set up
+            messages: apiMessages,
+        });
+
+        return response.choices[0].message;
+    } catch (error) {
+        console.error("Error generating flowchart summary:", error);
+        throw error;
+    }
+};

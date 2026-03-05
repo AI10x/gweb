@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef } from "react"
 import { generateChatPDF } from "../utils/pdf-generator"
 import ReactMarkdown from "react-markdown"
 import { ethers } from "ethers"
-import MermaidDiagram from "./mermaid-diagram"
+import FlowchartDiagram from "./flowchart-diagram"
 import Header from "./header"
 import Avatar from "./avatar"
 import "./chat-widget.css"
 import { fetchGroqCompletion } from "../services/groq"
-import { fetchAdditionalApiCompletion } from "../services/api-service"
+import { fetchAdditionalApiCompletion, fetchFlowchartCompletion } from "../services/api-service"
 import { extractTextFromPDF } from "../utils/pdf-parser"
 import AI10xIcon from "../images/ai10x-icon.png"
 
@@ -98,7 +98,7 @@ No final advice until the user has supplied enough detail for every Lean‑Canva
 Keep jargon to a minimum; explain any technical terms in plain language.
 If the user stalls, gently steer with a focused follow‑up (“Can you tell me more about the main pain point you mentioned?”).
 Goal: Co‑create a well‑validated Problem‑Opportunity‑Solution‑Ask statement and a complete Lean Canvas that the user can use to pitch, prototype, and secure resources.
-7. Additionally, explain the process using the Lean Canvas framework; and provide graphs and tables in ASCII text and mermaid code.
+7. Additionally, explain the process using the Lean Canvas framework; and provide graphs and tables in ASCII text and standard flowchart.js code. IMPORTANT: For flowcharts, ONLY output strict flowchart.js syntax (e.g., \`st=>start: Start\`), enclosed in a markdown code block with the \`flowchart\` language identifier. Do NOT use Mermaid.
 **Tone:** Professional, objective, encouraging, and highly analytical.`
 const ChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false)
@@ -302,7 +302,17 @@ const ChatWidget = () => {
             })
 
             let response
-            if (verifiedAddress && userMessageCount >= 4) {
+            const isFlowchartRequest = inputValue.toLowerCase().includes("flowchart") || inputValue.toLowerCase().includes("diagram");
+
+            if (isFlowchartRequest) {
+                console.log("Flowchart generation requested.")
+                try {
+                    response = await fetchFlowchartCompletion(apiMessages)
+                } catch (apiError) {
+                    console.error("Flowchart API failed, falling back to Groq:", apiError)
+                    response = await fetchGroqCompletion(apiMessages, SYSTEM_PROMPT)
+                }
+            } else if (verifiedAddress && userMessageCount >= 4) {
                 try {
                     console.log("Attempting additional API with address:", verifiedAddress, "- User msg count:", userMessageCount + 1)
                     // We prompt the compound model to separate Market Research so we can style it.
@@ -508,9 +518,9 @@ const ChatWidget = () => {
                                     components={{
                                         code({ node, inline, className, children, ...props }) {
                                             const match = /language-(\w+)/.exec(className || "")
-                                            const isMermaid = match && match[1] === "mermaid"
-                                            return !inline && isMermaid ? (
-                                                <MermaidDiagram chart={String(children).replace(/\n$/, "")} />
+                                            const isFlowchart = match && (match[1] === "flowchart" || match[1] === "flowchart.js")
+                                            return !inline && isFlowchart ? (
+                                                <FlowchartDiagram chart={String(children).replace(/\n$/, "")} />
                                             ) : (
                                                 <code className={className} {...props}>
                                                     {children}
