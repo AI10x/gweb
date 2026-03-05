@@ -6,7 +6,7 @@ const WalletConnect = () => {
     const [status, setStatus] = useState("")
 
     const connectAndSign = async () => {
-        if (!window.ethereum) {
+        if (typeof window === 'undefined' || !window.ethereum) {
             setStatus("Please install MetaMask!")
             return
         }

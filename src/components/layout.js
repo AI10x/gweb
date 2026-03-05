@@ -30,20 +30,22 @@ const Layout = ({ children }) => {
 
   useEffect(() => {
     const checkMobile = () => {
-      const mobileMatch = window.matchMedia("(max-width: 768px)").matches
-      const userAgentMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+      const mobileMatch = typeof window !== 'undefined' && window.matchMedia ? window.matchMedia("(max-width: 768px)").matches : false
+      const userAgentMobile = typeof navigator !== 'undefined' ? /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) : false
       setIsMobile(mobileMatch || userAgentMobile)
     }
 
     const checkOrientation = () => {
-      setIsPortrait(window.innerHeight > window.innerWidth)
+      setIsPortrait(typeof window !== 'undefined' ? window.innerHeight > window.innerWidth : false)
     }
 
     checkMobile()
     checkOrientation()
 
-    window.addEventListener("resize", checkOrientation)
-    window.addEventListener("orientationchange", checkOrientation)
+    if (typeof window !== 'undefined') {
+      window.addEventListener("resize", checkOrientation)
+      window.addEventListener("orientationchange", checkOrientation)
+    }
 
     // Attempt to lock orientation if on mobile
     if (isMobile && screen.orientation && screen.orientation.lock) {
@@ -53,8 +55,10 @@ const Layout = ({ children }) => {
     }
 
     return () => {
-      window.removeEventListener("resize", checkOrientation)
-      window.removeEventListener("orientationchange", checkOrientation)
+      if (typeof window !== 'undefined') {
+        window.removeEventListener("resize", checkOrientation)
+        window.removeEventListener("orientationchange", checkOrientation)
+      }
     }
   }, [isMobile])
 

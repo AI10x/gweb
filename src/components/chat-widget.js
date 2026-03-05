@@ -364,7 +364,7 @@ const ChatWidget = () => {
     }
 
     const connectAndSign = async () => {
-        if (!window.ethereum) {
+        if (typeof window === 'undefined' || !window.ethereum) {
             console.log("Please install MetaMask!")
             alert("Please install MetaMask to use this feature.")
             return
@@ -427,8 +427,8 @@ const ChatWidget = () => {
             // newWidth = currentRight - mouseX
             // newHeight = currentBottom - mouseY
 
-            const windowWidth = window.innerWidth
-            const windowHeight = window.innerHeight
+            const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 600
+            const windowHeight = typeof window !== 'undefined' ? window.innerHeight : 600
 
             // Assuming 2rem (32px) margins as per CSS
             const margin = 32
@@ -444,6 +444,8 @@ const ChatWidget = () => {
     }
 
     useEffect(() => {
+        if (typeof window === 'undefined') return;
+
         if (isResizing) {
             window.addEventListener('mousemove', resize)
             window.addEventListener('mouseup', stopResizing)
