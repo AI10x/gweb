@@ -80,29 +80,29 @@ const Layout = ({ children }) => {
       <BackgroundVideo />
       <div className="bottom-banner">
         <div className="banner-content">
-          <span>AI10x: Iterate Faster, Own the Future – Web 3‑Connected-wallet Design‑Thinking Toolbox.</span>
+          <span>AI10x: the (high performance) toolbox to iterate faster, own the future</span>
         </div>
       </div>
       <div className="diagram-section">
         <div className="flowchart-container">
           <div className="flowchart-node node-web3">
             <div className="node-icon">🌐</div>
-            <div className="node-text">Web3 Wallets</div>
+            <div className="node-text"> Web3 Wallets - global connection</div>
           </div>
           <div className="flowchart-connector"></div>
           <div className="flowchart-node node-llm">
             <div className="node-icon">🧠</div>
-            <div className="node-text">Open Weight LLMs</div>
+            <div className="node-text">Open Weight LLMs - ethical AI safety guardrails</div>
           </div>
           <div className="flowchart-connector"></div>
           <div className="flowchart-node node-groq">
             <div className="node-icon">⚡</div>
-            <div className="node-text">Groq Fast Inference</div>
+            <div className="node-text">Groq Fast Inference - latest price/performance & fastest</div>
           </div>
           <div className="flowchart-connector"></div>
           <div className="flowchart-node node-dt">
             <div className="node-icon">🎨</div>
-            <div className="node-text">Design Thinking & Lean Canvas</div>
+            <div className="node-text">Design Thinking & Lean Canvas toolbox (market research)</div>
           </div>
         </div>
       </div>
