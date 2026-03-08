@@ -1,0 +1,5 @@
+#take an erc21 address from the wallet verfication
+#use the address as key to encrypt some string data
+#store the cipher data in the Digtal Ocean postgres database
+#iff there is wallet connection, use the address to decrypt the data
+#otherwise, do the former three steps and return the cipher data to the database
