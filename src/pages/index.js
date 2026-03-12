@@ -9,8 +9,8 @@ const IndexPage = () => (
   <Layout>
     <SEO title="AI10xTech" />
     <h1 className="text-3d">AI10xTech</h1>
-    <p>Welcome to your new Gatsby site running on App Platform!</p>
-    <p>Now go build something great.</p>
+    <p>Design‑thinking educators waste valuable workshop time manually creating prompts and spec sheets because existing tools are disjointed and not open‑source.</p>
+    <p>Now come and build something great.</p>
     <div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
       <Image />
     </div>

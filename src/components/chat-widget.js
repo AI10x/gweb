@@ -103,7 +103,7 @@ Goal: Co‑create a well‑validated Problem‑Opportunity‑Solution‑Ask stat
 const ChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false)
     const [messages, setMessages] = useState([
-        { id: 1, text: "Hello! How can I help you today? If'd you like deeper insights, please consider supporting our work — by finding us on the unstoppable domains App — ai10x.org Additionally, our finance page can be found on ud.me/ai10x.org" },
+        { id: 1, text: "Need more intensive support for your Startup feel free to reach out at [admin@ai10x.dev](mailto:admin@ai10x.dev)" },
     ])
     const [inputValue, setInputValue] = useState("")
     const [thought, setThought] = useState("Need help?")
