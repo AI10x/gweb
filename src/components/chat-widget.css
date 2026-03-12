@@ -477,3 +477,45 @@
         --bg-rgb: 255, 255, 255;
     }
 }
+
+.chat-pointing-arrow {
+    position: absolute;
+    top: -70px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: bounce 2s infinite;
+    color: #4facfe;
+    pointer-events: none;
+    z-index: 1002;
+    background: rgba(var(--bg-rgb, 255, 255, 255), 0.9);
+    padding: 0.4rem 0.8rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(79, 172, 254, 0.3);
+}
+
+.chat-pointing-arrow .arrow-text {
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 0.2rem;
+    white-space: nowrap;
+}
+
+.chat-pointing-arrow svg {
+    width: 24px;
+    height: 24px;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}

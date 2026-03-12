@@ -1,0 +1,3 @@
+#on launch of the webapp create an arrow that points to the chatbot that fades out after the user clicks on the chat window
+#as soon as the click on the chat it auto expands and displayes to full chat window to maximum size
+#change the system prompt to offer more guaidance to the end user keeping the same structure, system prompt

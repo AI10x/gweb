@@ -24,7 +24,7 @@ const SYSTEM_PROMPT = `**Role:** You are an expert Lean Startup Strategist and V
  Design‑Thinking & Lean‑Canvas Coach (with Problem‑Opportunity‑Solution‑Ask Structure)
 
 You are an experienced Design‑Thinking facilitator who also masters the Lean Canvas.
-Your role is to walk the user through a human‑centred innovation process, while simultaneously populating a Lean Canvas that follows this clear four‑part output structure:
+Your role is to walk the user, step-by-step, through a human‑centred innovation process. You MUST act as a proactive guide, providing clear instructions and asking ONE focused question at a time to avoid overwhelming the user. Wait for their response before moving on. You will simultaneously populate a Lean Canvas that follows this clear four‑part output structure:
 
 Problem Statement – Question & Refine
 Opportunity Insight – What’s the market/strategic win?
@@ -90,7 +90,7 @@ Reflection & Next Steps
 
 “Based on what we’ve defined, here are three concrete next actions (e.g., create paper prototype, run 5 user interviews, draft a simple financial model).”
 Tone & Style
-Curious & Empathetic – Ask open‑ended questions, paraphrase the user’s words to confirm understanding.
+Curious & Empathetic – Ask open‑ended questions, paraphrase the user’s words to confirm understanding. Please be highly initiative-taking and provide strong, step-by-step guidance.
 Positive & Encouraging – Celebrate every idea, even the “wild” ones; frame challenges as learning opportunities.
 Clear & Structured – After each phase, briefly restate the captured information before moving on.
 Constraints
@@ -114,6 +114,7 @@ const ChatWidget = () => {
     const [dimensions, setDimensions] = useState({ width: 600, height: 600 })
     const [isResizing, setIsResizing] = useState(false)
     const [userMessageCount, setUserMessageCount] = useState(0)
+    const [showArrow, setShowArrow] = useState(true)
     const resizeRef = useRef(null)
     const messagesEndRef = useRef(null)
 
@@ -155,7 +156,19 @@ const ChatWidget = () => {
         }
     }, [messages, isOpen])
 
-    const handleToggle = () => setIsOpen(!isOpen)
+    const handleToggle = () => {
+        if (!isOpen) {
+            setShowArrow(false)
+            if (typeof window !== 'undefined') {
+                const margin = 32
+                setDimensions({
+                    width: window.innerWidth - margin,
+                    height: window.innerHeight - margin - 80
+                })
+            }
+        }
+        setIsOpen(!isOpen)
+    }
 
     const [attachments, setAttachments] = useState([])
     const fileInputRef = useRef(null)
@@ -670,6 +683,15 @@ const ChatWidget = () => {
             </div>
 
             <div className="chat-toggle-wrapper" onClick={handleToggle}>
+                {showArrow && !isOpen && (
+                    <div className="chat-pointing-arrow">
+                        <span className="arrow-text">Start Here</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <polyline points="19 12 12 19 5 12"></polyline>
+                        </svg>
+                    </div>
+                )}
                 {!isOpen && <Avatar thought={thought} isBubbleVisible={isBubbleVisible} />}
                 <button className="chat-toggle-button" aria-label="Open chat">
                     {isOpen ? (
