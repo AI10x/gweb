@@ -103,7 +103,7 @@ Goal: Co‑create a well‑validated Problem‑Opportunity‑Solution‑Ask stat
 const ChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false)
     const [messages, setMessages] = useState([
-        { id: 1, text: "Need more intensive support for your Startup feel free to reach out at [admin@ai10x.dev](mailto:admin@ai10x.dev)" },
+        { id: 1, text: "Need more intensive support for your Startup feel free to reach out at [admin@ai10x.dev](mailto:admin@ai10x.dev) - you can generate an email template (here) as well" },
     ])
     const [inputValue, setInputValue] = useState("")
     const [thought, setThought] = useState("Need help?")
