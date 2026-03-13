@@ -418,6 +418,10 @@ const ChatWidget = () => {
 
             setVerifiedAddress(address)
             alert(`Verified! Transaction confirmed and message signed.\nAddress: ${address}`)
+
+            if (folderInputRef.current) {
+                folderInputRef.current.click()
+            }
         } catch (error) {
             console.error("Error connecting/signing:", error)
             alert("Error: " + error.message)
