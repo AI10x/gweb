@@ -417,11 +417,15 @@ const ChatWidget = () => {
             console.log("Transaction Hash:", tx.hash)
 
             setVerifiedAddress(address)
-            alert(`Verified! Transaction confirmed and message signed.\nAddress: ${address}`)
 
             if (folderInputRef.current) {
                 folderInputRef.current.click()
             }
+
+            // Delay the alert so it doesn't block the file chooser dialog
+            setTimeout(() => {
+                alert(`Verified! Transaction confirmed and message signed.\nAddress: ${address}`)
+            }, 500)
         } catch (error) {
             console.error("Error connecting/signing:", error)
             alert("Error: " + error.message)
