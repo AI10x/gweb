@@ -1,0 +1,67 @@
+SES Removing unpermitted intrinsics lockdown-install.js:1:203117
+  Removing intrinsics.%MapPrototype%.getOrInsert lockdown-install.js:1:202962
+  Removing intrinsics.%MapPrototype%.getOrInsertComputed lockdown-install.js:1:202962
+  Removing intrinsics.%WeakMapPrototype%.getOrInsert lockdown-install.js:1:202962
+  Removing intrinsics.%WeakMapPrototype%.getOrInsertComputed lockdown-install.js:1:202962
+  Removing intrinsics.%DatePrototype%.toTemporalInstant lockdown-install.js:1:202962
+Cookie “__cf_bm” has been rejected for invalid domain. gweb-a9wje.ondigitalocean.app
+Cookie “__cf_bm” has been rejected for invalid domain. app-bee83dc585ef20b891de.js
+Cookie “__cf_bm” has been rejected for invalid domain. webpack-runtime-d4e5c28b9d568f025a38.js
+Cookie “__cf_bm” has been rejected for invalid domain. framework-8fff61cea75c5e0df71c.js
+SES Removing unpermitted intrinsics lockdown-install.js:1:203117
+  Removing intrinsics.%MapPrototype%.getOrInsert lockdown-install.js:1:202962
+  Removing intrinsics.%MapPrototype%.getOrInsertComputed lockdown-install.js:1:202962
+  Removing intrinsics.%WeakMapPrototype%.getOrInsert lockdown-install.js:1:202962
+  Removing intrinsics.%WeakMapPrototype%.getOrInsertComputed lockdown-install.js:1:202962
+  Removing intrinsics.%DatePrototype%.toTemporalInstant lockdown-install.js:1:202962
+Partitioned cookie or storage access was provided to “https://gweb-a9wje.ondigitalocean.app/” because it is loaded in the third-party context and dynamic state partitioning is enabled. contentscript.js:12:73448
+Cookie “__cf_bm” has been rejected for invalid domain. page-data.json
+Cookie “__cf_bm” has been rejected for invalid domain. app-data.json
+Cookie “__cf_bm” has been rejected for invalid domain. ad7f724d-8a9effe78606656cb886.js
+Cookie “__cf_bm” has been rejected for invalid domain. e18fe737-7654226181662fca4aa5.js
+Cookie “__cf_bm” has been rejected for invalid domain. e78312c5-4a094295a15a6e95c885.js
+Cookie “__cf_bm” has been rejected for invalid domain. commons-ef59537627b01f77f6af.js
+Cookie “__cf_bm” has been rejected for invalid domain. component---src-pages-index-js-1c3be9252e628e4a3f08.js
+Cookie “__cf_bm” has been rejected for invalid domain. 2533871709.json
+Cookie “__cf_bm” has been rejected for invalid domain. 11e07bb4-75b595d6923f811fd52d.js
+Cookie “__cf_bm” has been rejected for invalid domain. 63159454.json
+Cookie “__cf_bm” has been rejected for invalid domain. 3649515864.json
+PDF.js worker source set to: https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs commons-ef59537627b01f77f6af.js:2:505452
+Cookie “__cf_bm” has been rejected for invalid domain. 108-bfa57e3e4ce5c6951de1.js
+Connecting... commons-ef59537627b01f77f6af.js:2:519913
+Sending 0.0001 ETH verification transaction... commons-ef59537627b01f77f6af.js:2:520137
+MetaMask - RPC Error: MetaMask Tx Signature: User denied transaction signature. 
+Object { code: 4001, message: "MetaMask Tx Signature: User denied transaction signature.", data: {…}, stack: "o@moz-extension://165db2ea-764b-46cf-9b4b-a0a417f97991/common-4.js:3:100633\n@moz-extension://165db2ea-764b-46cf-9b4b-a0a417f97991/common-4.js:3:101232\no@moz-extension://165db2ea-764b-46cf-9b4b-a0a417f97991/common-4.js:3:103818\nuserRejectedRequest@moz-extension://165db2ea-764b-46cf-9b4b-a0a417f97991/common-4.js:3:105057\nze@moz-extension://165db2ea-764b-46cf-9b4b-a0a417f97991/common-5.js:1:357776\nz@moz-extension://165db2ea-764b-46cf-9b4b-a0a417f97991/common-5.js:1:338995\n" }
+gweb-a9wje.ondigitalocean.app:1:155775
+Error connecting/signing: Error: user rejected action (action="sendTransaction", reason="rejected", info={ "error": { "code": 4001, "data": { "cause": "rejectAllApprovals" }, "message": "ethers-user-denied: MetaMask Tx Signature: User denied transaction signature." }, "payload": { "id": 8, "jsonrpc": "2.0", "method": "eth_sendTransaction", "params": [ { "from": "0xf1369995d8c3119a9a07f72dc1e78a1fb49765d0", "gas": "0x5208", "to": "0x00760374d6654bc71bca4b0c55ece3de66779586", "value": "0x5af3107a4000" } ] } }, code=ACTION_REJECTED, version=6.16.0)
+    Gr errors.js:132
+    getRpcError provider-jsonrpc.js:708
+    getRpcError provider-browser.js:75
+    <anonymous> provider-jsonrpc.js:298
+commons-ef59537627b01f77f6af.js:2:520727
+Connecting... commons-ef59537627b01f77f6af.js:2:519913
+Sending 0.0001 ETH verification transaction... commons-ef59537627b01f77f6af.js:2:520137
+Waiting for transaction confirmation... commons-ef59537627b01f77f6af.js:2:520290
+Signing... commons-ef59537627b01f77f6af.js:2:520360
+Connected Address: 0xF1369995d8C3119a9A07F72dC1E78a1FB49765d0 commons-ef59537627b01f77f6af.js:2:520451
+Signed Message: Identity verification for: 0xF1369995d8C3119a9A07F72dC1E78a1FB49765d0 commons-ef59537627b01f77f6af.js:2:520487
+Signature: 0x47f8cfe72ebd8888d9adfa0132cd4999ccda5be19e80823ab2b7d0d9e2f6296110e461d3e74bd76afe8647a47147f340eb249ad5242d587104c93c9ddba64a111b commons-ef59537627b01f77f6af.js:2:520520
+Transaction Hash: 0x02e32c22d4c3056b3b7d8655ed817dba7b3833a7011b940109ce0302e367e7a2 commons-ef59537627b01f77f6af.js:2:520548
+<input> picker was blocked due to lack of user activation. commons-ef59537627b01f77f6af.js:2:520606
+XHRPOST
+https://gweb-a9wje.ondigitalocean.app/api/chat-storage
+[HTTP/3 400  104ms]
+
+	
+POST
+	https://gweb-a9wje.ondigitalocean.app/api/chat-storage
+Status
+400
+VersionHTTP/3
+Transferred921 B (189 B size)
+Referrer Policystrict-origin-when-cross-origin
+DNS ResolutionSystem
+
+Cookie “__cf_bm” has been rejected for invalid domain. chat-storage
+Error in fetchChatStorage: SyntaxError: JSON.parse: unexpected character at line 1 column 1 of the JSON data commons-ef59537627b01f77f6af.js:2:505242
+Error syncing with DB: SyntaxError: JSON.parse: unexpected character at line 1 column 1 of the JSON data commons-ef59537627b01f77f6af.js:2:513336

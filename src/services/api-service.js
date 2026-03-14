@@ -78,12 +78,18 @@ export const fetchChatStorage = async (payload) => {
             body: JSON.stringify(payload),
         });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || `HTTP error! status: ${response.status}`);
+            }
+            return data;
+        } else {
+            const text = await response.text();
+            console.error("Non-JSON response from /api/chat-storage:", text);
+            throw new Error(`Server returned non-JSON response: ${response.status}`);
         }
-
-        return await response.json();
     } catch (error) {
         console.error("Error in fetchChatStorage:", error);
         throw error;

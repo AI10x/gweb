@@ -1,13 +1,21 @@
 import { Pool } from "pg"
 
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false,
-    },
-})
+let pool;
+
+if (process.env.DATABASE_URL && process.env.DATABASE_URL !== "postgres://user:password@host:port/dbname?sslmode=require") {
+    pool = new Pool({
+        connectionString: process.env.DATABASE_URL,
+        ssl: {
+            rejectUnauthorized: false,
+        },
+    })
+}
 
 export default async function handler(req, res) {
+    if (!pool) {
+        console.error("DATABASE_URL is not set or is still a placeholder.");
+        return res.status(500).json({ error: "Database configuration missing. Please check your .env file." })
+    }
     const { action, userId, chatData, id } = req.body
 
     try {
