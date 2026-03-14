@@ -25,7 +25,8 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-helmet": "^6.1.0",
-    "react-markdown": "^10.1.0"
+    "react-markdown": "^10.1.0",
+    "gatsby-cli": "^5.14.0"
   },
   "devDependencies": {
     "prettier": "^3.4.0"
@@ -39,7 +40,7 @@
     "develop": "gatsby develop",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "start": "node sammy.js; npm run serve",
-    "serve": "gatsby serve -p ${PORT:-8080}",
+    "serve": "gatsby serve -p ${PORT:-8080} -H 0.0.0.0",
     "clean": "gatsby clean",
     "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1"
   },

@@ -1,11 +1,14 @@
 name: gweb
-static_sites:
+services:
 - environment_slug: gatsby
   github:
     branch: main
     deploy_on_push: true
     repo: AI10x/gweb
   name: sample-gatsby
+  http_port: 8080
+  build_command: npm run build
+  run_command: npm start
   envs:
   - key: GATSBY_GROQ_API_KEY
     scope: RUN_AND_BUILD_TIME
