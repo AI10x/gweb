@@ -7,7 +7,7 @@ import Header from "./header"
 import Avatar from "./avatar"
 import "./chat-widget.css"
 import { fetchGroqCompletion } from "../services/groq"
-import { fetchAdditionalApiCompletion, fetchFlowchartCompletion, fetchChatStorage } from "../services/api-service"
+import { fetchAdditionalApiCompletion, fetchFlowchartCompletion, fetchChatStorage, fetchDBEnrichedGroqCompletion } from "../services/api-service"
 import { extractTextFromPDF } from "../utils/pdf-parser"
 import AI10xIcon from "../images/ai10x-icon.png"
 
@@ -381,18 +381,23 @@ const ChatWidget = () => {
                     console.error("Flowchart API failed, falling back to Groq:", apiError)
                     response = await fetchGroqCompletion(apiMessages, SYSTEM_PROMPT)
                 }
-            } else if (verifiedAddress && userMessageCount >= 4) {
+            } else if (verifiedAddress) {
                 try {
-                    console.log("Attempting additional API with address:", verifiedAddress, "- User msg count:", userMessageCount + 1)
-                    // We prompt the compound model to separate Market Research so we can style it.
-                    const specPrompt = SYSTEM_PROMPT + `\n\nCRITICAL OUTPUT FORMATTING: Ensure your response has two separate text outputs (paragraphs) separated by a large white space (e.g. padding). Title the second output "Market Research". Wrap the entire second output (including the title) inside a markdown blockquote like this: > [!MARKET_RESEARCH] so the frontend can style it darkly.`;
-                    response = await fetchAdditionalApiCompletion(apiMessages, verifiedAddress, specPrompt)
+                    console.log("Using DB-Enriched Groq API for verified address:", verifiedAddress)
+
+                    // If we also meet the market research criteria (message count >= 4), include that formatting
+                    let currentPrompt = SYSTEM_PROMPT
+                    if (userMessageCount >= 4) {
+                        currentPrompt += `\n\nCRITICAL OUTPUT FORMATTING: Ensure your response has two separate text outputs (paragraphs) separated by a large white space (e.g. padding). Title the second output "Market Research". Wrap the entire second output (including the title) inside a markdown blockquote like this: > [!MARKET_RESEARCH] so the frontend can style it darkly.`;
+                    }
+
+                    response = await fetchDBEnrichedGroqCompletion(apiMessages, verifiedAddress, currentPrompt)
                 } catch (apiError) {
-                    console.error("Additional API failed, falling back to Groq:", apiError)
+                    console.error("DB-Enriched API failed, falling back to standard Groq:", apiError)
                     response = await fetchGroqCompletion(apiMessages, SYSTEM_PROMPT)
                 }
             } else {
-                console.log("Using standard Groq API. Verified:", !!verifiedAddress, "Msg Count:", userMessageCount + 1)
+                console.log("Using standard Groq API. Msg Count:", userMessageCount + 1)
                 response = await fetchGroqCompletion(apiMessages, SYSTEM_PROMPT)
             }
 
