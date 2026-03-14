@@ -1,0 +1,8 @@
+doctl auth remove --context default
+doctl apps list
+doctl auth init
+doctl auth list
+doctl auth token
+doctl auth switch --context default
+doctl apps list
+doctl apps delete <ID>

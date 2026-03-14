@@ -120,10 +120,10 @@ const ChatWidget = () => {
 
     const thoughts = [
         "Design thinking toolbox?",
-        "Vertical insight goto unstoppable domains App — ai10x.org",
+        "Vertical insight - chat with our assistant",
         "Lean startup?",
         "MVP (minimum vaiable product)?",
-        "Founding team? DM at unstoppable domains App — ai10x.org",
+        "Founding team? Email at admin@ai10x.dev(mailto:admin@ai110x.dev)",
     ]
 
     useEffect(() => {
