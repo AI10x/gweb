@@ -1,0 +1,13 @@
+#connect to the relation database using env variables
+#create a table to store the chat data
+#the table should have the following columns:
+#id - primary key
+#user_id - user id
+#chat_data - chat data
+#created_at - created at time stamp
+#updated_at - updated at time stamp
+#add a function to insert the chat data into the table
+#add a function to retrieve the chat data from the table
+#add a function to update the chat data in the table
+#add a function to delete the chat data from the table
+#add a function to retrieve all the chat data from the table
