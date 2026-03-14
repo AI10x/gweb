@@ -67,3 +67,25 @@ IMPORTANT: You MUST ONLY output strict flowchart.js syntax (e.g., \`st=>start: S
         throw error;
     }
 };
+
+export const fetchChatStorage = async (payload) => {
+    try {
+        const response = await fetch("/api/chat-storage", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error in fetchChatStorage:", error);
+        throw error;
+    }
+};

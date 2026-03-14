@@ -7,7 +7,7 @@ import Header from "./header"
 import Avatar from "./avatar"
 import "./chat-widget.css"
 import { fetchGroqCompletion } from "../services/groq"
-import { fetchAdditionalApiCompletion, fetchFlowchartCompletion } from "../services/api-service"
+import { fetchAdditionalApiCompletion, fetchFlowchartCompletion, fetchChatStorage } from "../services/api-service"
 import { extractTextFromPDF } from "../utils/pdf-parser"
 import AI10xIcon from "../images/ai10x-icon.png"
 
@@ -115,6 +115,7 @@ const ChatWidget = () => {
     const [isResizing, setIsResizing] = useState(false)
     const [userMessageCount, setUserMessageCount] = useState(0)
     const [showArrow, setShowArrow] = useState(true)
+    const [dbRecordId, setDbRecordId] = useState(null)
     const resizeRef = useRef(null)
     const messagesEndRef = useRef(null)
 
@@ -155,6 +156,61 @@ const ChatWidget = () => {
             scrollToBottom()
         }
     }, [messages, isOpen])
+
+    // Sync messages with DB when wallet is verified
+    useEffect(() => {
+        const syncWithDB = async () => {
+            if (verifiedAddress) {
+                try {
+                    // Try to list existing chats for this address
+                    const history = await fetchChatStorage({ action: "list", userId: verifiedAddress })
+                    if (history && history.length > 0) {
+                        // Take the most recent chat
+                        const latestChat = history[history.length - 1]
+                        if (latestChat.chat_data && latestChat.chat_data.messages) {
+                            setMessages(latestChat.chat_data.messages)
+                            setDbRecordId(latestChat.id)
+                        }
+                    } else {
+                        // Initialize table if it's the first time
+                        await fetchChatStorage({ action: "init" })
+                    }
+                } catch (error) {
+                    console.error("Error syncing with DB:", error)
+                }
+            }
+        }
+        syncWithDB()
+    }, [verifiedAddress])
+
+    // Save chat when messages update and wallet is connected
+    useEffect(() => {
+        const saveChat = async () => {
+            if (verifiedAddress && messages.length > 1) { // messages.length > 1 to avoid saving initial state only
+                try {
+                    if (dbRecordId) {
+                        await fetchChatStorage({
+                            action: "update",
+                            id: dbRecordId,
+                            chatData: { messages }
+                        })
+                    } else {
+                        const newRecord = await fetchChatStorage({
+                            action: "insert",
+                            userId: verifiedAddress,
+                            chatData: { messages }
+                        })
+                        if (newRecord && newRecord.id) {
+                            setDbRecordId(newRecord.id)
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error saving to DB:", error)
+                }
+            }
+        }
+        saveChat()
+    }, [messages, verifiedAddress, dbRecordId])
 
     const handleToggle = () => {
         if (!isOpen) {
