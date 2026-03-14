@@ -1,0 +1,134 @@
+SES Removing unpermitted intrinsics lockdown-install.js:1:203117
+  Removing intrinsics.%MapPrototype%.getOrInsert lockdown-install.js:1:202962
+  Removing intrinsics.%MapPrototype%.getOrInsertComputed lockdown-install.js:1:202962
+  Removing intrinsics.%WeakMapPrototype%.getOrInsert lockdown-install.js:1:202962
+  Removing intrinsics.%WeakMapPrototype%.getOrInsertComputed lockdown-install.js:1:202962
+  Removing intrinsics.%DatePrototype%.toTemporalInstant lockdown-install.js:1:202962
+Cookie “__cf_bm” has been rejected for invalid domain. gweb-a9wje.ondigitalocean.app
+Cookie “__cf_bm” has been rejected for invalid domain. framework-8fff61cea75c5e0df71c.js
+Cookie “__cf_bm” has been rejected for invalid domain. webpack-runtime-7f6d01d0c6cc98ddb608.js
+Cookie “__cf_bm” has been rejected for invalid domain. app-bee83dc585ef20b891de.js
+SES Removing unpermitted intrinsics lockdown-install.js:1:203117
+  Removing intrinsics.%MapPrototype%.getOrInsert lockdown-install.js:1:202962
+  Removing intrinsics.%MapPrototype%.getOrInsertComputed lockdown-install.js:1:202962
+  Removing intrinsics.%WeakMapPrototype%.getOrInsert lockdown-install.js:1:202962
+  Removing intrinsics.%WeakMapPrototype%.getOrInsertComputed lockdown-install.js:1:202962
+  Removing intrinsics.%DatePrototype%.toTemporalInstant lockdown-install.js:1:202962
+Partitioned cookie or storage access was provided to “https://gweb-a9wje.ondigitalocean.app/” because it is loaded in the third-party context and dynamic state partitioning is enabled. contentscript.js:12:73448
+Cookie “__cf_bm” has been rejected for invalid domain. page-data.json
+Cookie “__cf_bm” has been rejected for invalid domain. app-data.json
+Cookie “__cf_bm” has been rejected for invalid domain. component---src-pages-index-js-1c3be9252e628e4a3f08.js
+Cookie “__cf_bm” has been rejected for invalid domain. 2533871709.json
+Cookie “__cf_bm” has been rejected for invalid domain. 3649515864.json
+Cookie “__cf_bm” has been rejected for invalid domain. ad7f724d-8a9effe78606656cb886.js
+Cookie “__cf_bm” has been rejected for invalid domain. 11e07bb4-75b595d6923f811fd52d.js
+Cookie “__cf_bm” has been rejected for invalid domain. e78312c5-4a094295a15a6e95c885.js
+Cookie “__cf_bm” has been rejected for invalid domain. commons-8525f63d6066b9a98c24.js
+Cookie “__cf_bm” has been rejected for invalid domain. 63159454.json
+Cookie “__cf_bm” has been rejected for invalid domain. e18fe737-7654226181662fca4aa5.js
+PDF.js worker source set to: https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs commons-8525f63d6066b9a98c24.js:2:505662
+Cookie “__cf_bm” has been rejected for invalid domain. 108-bfa57e3e4ce5c6951de1.js
+Connecting... commons-8525f63d6066b9a98c24.js:2:520123
+Sending 0.0001 ETH verification transaction... commons-8525f63d6066b9a98c24.js:2:520347
+Waiting for transaction confirmation... commons-8525f63d6066b9a98c24.js:2:520500
+Signing... commons-8525f63d6066b9a98c24.js:2:520570
+Connected Address: 0xF1369995d8C3119a9A07F72dC1E78a1FB49765d0 commons-8525f63d6066b9a98c24.js:2:520661
+Signed Message: Identity verification for: 0xF1369995d8C3119a9A07F72dC1E78a1FB49765d0 commons-8525f63d6066b9a98c24.js:2:520697
+Signature: 0x47f8cfe72ebd8888d9adfa0132cd4999ccda5be19e80823ab2b7d0d9e2f6296110e461d3e74bd76afe8647a47147f340eb249ad5242d587104c93c9ddba64a111b commons-8525f63d6066b9a98c24.js:2:520730
+Transaction Hash: 0xf114a61e89b59ae3528018ae05a56d43d5114d6b45d90248bc79b3cfbb969ad4 commons-8525f63d6066b9a98c24.js:2:520758
+<input> picker was blocked due to lack of user activation. commons-8525f63d6066b9a98c24.js:2:520816
+Cookie “__cf_bm” has been rejected for invalid domain. chat-storage
+Non-JSON response from /api/chat-storage: <?xml version="1.0" encoding="UTF-8"?><Error><Code>InvalidRequest</Code><Message>Couldn&apos;t route the request.</Message><Resource>/</Resource><RequestId>not available</RequestId></Error> commons-8525f63d6066b9a98c24.js:2:505317
+Error in fetchChatStorage: Error: Server returned non-JSON response: 400
+    Av api-service.js:91
+commons-8525f63d6066b9a98c24.js:2:505452
+Error syncing with DB: Error: Server returned non-JSON response: 400
+    Av api-service.js:91
+commons-8525f63d6066b9a98c24.js:2:513546
+Using DB-Enriched Groq API for verified address: 0xF1369995d8C3119a9A07F72dC1E78a1FB49765d0 commons-8525f63d6066b9a98c24.js:2:527097
+Fetching DB-enriched Groq completion for address: 0xF1369995d8C3119a9A07F72dC1E78a1FB49765d0 commons-8525f63d6066b9a98c24.js:2:527546
+XHRPOST
+https://gweb-a9wje.ondigitalocean.app/api/chat-storage
+[HTTP/3 400  24ms]
+
+XHRPOST
+https://gweb-a9wje.ondigitalocean.app/api/chat-storage
+[HTTP/3 400  27ms]
+
+Cookie “__cf_bm” has been rejected for invalid domain. chat-storage
+Non-JSON response from /api/chat-storage: <?xml version="1.0" encoding="UTF-8"?><Error><Code>InvalidRequest</Code><Message>Couldn&apos;t route the request.</Message><Resource>/</Resource><RequestId>not available</RequestId></Error> commons-8525f63d6066b9a98c24.js:2:505317
+Error in fetchChatStorage: Error: Server returned non-JSON response: 400
+    Av api-service.js:91
+    e api-service.js:104
+    onSubmit chat-widget.js:394
+    React 11
+commons-8525f63d6066b9a98c24.js:2:505452
+Error in fetchDBEnrichedGroqCompletion: Error: Server returned non-JSON response: 400
+    Av api-service.js:91
+    e api-service.js:104
+    onSubmit chat-widget.js:394
+    React 11
+commons-8525f63d6066b9a98c24.js:2:528425
+DB-Enriched API failed, falling back to standard Groq: Error: Server returned non-JSON response: 400
+    Av api-service.js:91
+    e api-service.js:104
+    onSubmit chat-widget.js:394
+    React 11
+commons-8525f63d6066b9a98c24.js:2:528505
+Cookie “__cf_bm” has been rejected for invalid domain. chat-storage
+Non-JSON response from /api/chat-storage: <?xml version="1.0" encoding="UTF-8"?><Error><Code>InvalidRequest</Code><Message>Couldn&apos;t route the request.</Message><Resource>/</Resource><RequestId>not available</RequestId></Error> commons-8525f63d6066b9a98c24.js:2:505317
+Error in fetchChatStorage: Error: Server returned non-JSON response: 400
+    Av api-service.js:91
+    Pv chat-widget.js:198
+    Pv chat-widget.js:212
+    React 10
+    onSubmit chat-widget.js:317
+    React 11
+commons-8525f63d6066b9a98c24.js:2:505452
+Error saving to DB: Error: Server returned non-JSON response: 400
+    Av api-service.js:91
+    Pv chat-widget.js:198
+    Pv chat-widget.js:212
+    React 10
+    onSubmit chat-widget.js:317
+    React 11
+commons-8525f63d6066b9a98c24.js:2:513811
+Cookie “__cf_bm” has been rejected for invalid domain. ai10x-icon-558a168262be26c864917c59178aa12f.png
+XHRPOST
+https://gweb-a9wje.ondigitalocean.app/api/chat-storage
+[HTTP/3 400  23ms]
+
+	
+POST
+	https://gweb-a9wje.ondigitalocean.app/api/chat-storage
+Status
+400
+VersionHTTP/3
+Transferred921 B (189 B size)
+Referrer Policystrict-origin-when-cross-origin
+DNS ResolutionSystem
+
+Cookie “__cf_bm” has been rejected for invalid domain. chat-storage
+Non-JSON response from /api/chat-storage: <?xml version="1.0" encoding="UTF-8"?><Error><Code>InvalidRequest</Code><Message>Couldn&apos;t route the request.</Message><Resource>/</Resource><RequestId>not available</RequestId></Error> commons-8525f63d6066b9a98c24.js:2:505317
+    Av api-service.js:90
+    Pv chat-widget.js:198
+    Pv chat-widget.js:212
+    React 3
+    S scheduler.production.min.js:13
+    T scheduler.production.min.js:14
+Error in fetchChatStorage: Error: Server returned non-JSON response: 400
+    Av api-service.js:91
+    Pv chat-widget.js:198
+    Pv chat-widget.js:212
+    React 3
+    S scheduler.production.min.js:13
+    T scheduler.production.min.js:14
+commons-8525f63d6066b9a98c24.js:2:505452
+Error saving to DB: Error: Server returned non-JSON response: 400
+    Av api-service.js:91
+    Pv chat-widget.js:198
+    Pv chat-widget.js:212
+    React 3
+    S scheduler.production.min.js:13
+    T scheduler.production.min.js:14
+commons-8525f63d6066b9a98c24.js:2:513811
