@@ -468,14 +468,14 @@ const ChatWidget = () => {
             console.log("Waiting for transaction confirmation...")
             await tx.wait()
 
-            console.log("Signing...")
-            const message = `Identity verification for: ${address}`
-            const signature = await signer.signMessage(message)
+            //console.log("Signing...")
+            //const message = `Identity verification for: ${address}`
+            //const signature = await signer.signMessage(message)
 
             console.log("Connected Address:", address)
-            console.log("Signed Message:", message)
-            console.log("Signature:", signature)
-            console.log("Transaction Hash:", tx.hash)
+            //console.log("Signed Message:", message)
+            //console.log("Signature:", signature)
+            //console.log("Transaction Hash:", tx.hash)
 
             setVerifiedAddress(address)
 
