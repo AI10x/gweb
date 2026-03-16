@@ -7,14 +7,14 @@ const groq = new Groq({
 
 const triggerActivelyRun = async (data) => {
     try {
-        await fetch("https://actively.run", {
+        await fetch("/api/notify", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(data),
         })
-        console.log("Actively Run notification sent successfully")
+        console.log("Actively Run notification sent successfully via proxy")
     } catch (error) {
         console.error("Error notifying actively.run:", error)
     }
