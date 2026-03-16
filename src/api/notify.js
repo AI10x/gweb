@@ -1,6 +1,9 @@
 export default async function handler(req, res) {
-    if (req.method !== "POST") {
-        return res.status(405).json({ error: "Method not allowed" });
+    console.log(`Notification handler hit with method: ${req.method}`);
+
+    // Temporarily less strict for debugging 405
+    if (req.method === "GET") {
+        return res.status(200).json({ message: "Notification endpoint ready" });
     }
 
     try {

@@ -12,7 +12,7 @@ const client = new OpenAI({
 
 const triggerActivelyRun = async (data, prompt) => {
     try {
-        await fetch("/api/notify", {
+        await fetch("/api/notify/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
