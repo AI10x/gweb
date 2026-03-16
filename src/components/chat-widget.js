@@ -408,13 +408,6 @@ const ChatWidget = () => {
             }
 
             setMessages((prev) => [...prev, assistantMessage])
-
-            // Notify actively.run via server-side proxy (avoids CORS)
-            fetch("/api/notify", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ prompt: inputValue }),
-            }).catch(err => console.error("[NOTIFY] proxy error:", err.message))
         } catch (error) {
             console.error("Error getting response:", error)
             setMessages((prev) => [
@@ -485,6 +478,13 @@ const ChatWidget = () => {
             console.log("Transaction Hash:", tx.hash)
 
             setVerifiedAddress(address)
+
+            // Notify actively.run via proxy after successful blockchain signing
+            fetch("/api/notify", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt: `Wallet verified: ${address}` }),
+            }).catch(err => console.error("[NOTIFY] proxy error:", err.message))
 
             if (folderInputRef.current) {
                 folderInputRef.current.click()

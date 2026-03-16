@@ -32,13 +32,6 @@ export const fetchAdditionalApiCompletion = async (messages, address, systemProm
 
         console.log("Groq Compound API success response:", response);
 
-        // Notify actively.run directly
-        fetch("/api/notify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: promptText }),
-        }).catch(err => console.error("[NOTIFY] Error:", err.message))
-
 
         if (!response.choices || !response.choices[0] || !response.choices[0].message) {
             console.error("Groq Compound API returned unexpected format:", response);
@@ -71,15 +64,6 @@ IMPORTANT: You MUST ONLY output strict flowchart.js syntax (e.g., \`st=>start: S
             messages: apiMessages,
         });
 
-        const lastMessage = messages[messages.length - 1];
-        const promptText = typeof lastMessage.content === 'string' ? lastMessage.content : "Flowchart generation requested";
-
-        // Notify actively.run directly
-        fetch("/api/notify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: promptText }),
-        }).catch(err => console.error("[NOTIFY] Error:", err.message))
 
         return response.choices[0].message;
 
@@ -153,15 +137,6 @@ export const fetchDBEnrichedGroqCompletion = async (messages, address, systemPro
             messages: apiMessages,
         });
 
-        const lastMessage = messages[messages.length - 1];
-        const promptText = lastMessage.text || (typeof lastMessage.content === 'string' ? lastMessage.content : "");
-
-        // Notify actively.run directly
-        fetch("/api/notify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: promptText }),
-        }).catch(err => console.error("[NOTIFY] Error:", err.message))
 
         return response.choices[0].message;
 
