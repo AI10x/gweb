@@ -5,14 +5,14 @@ const groq = new Groq({
     dangerouslyAllowBrowser: true,
 });
 
-const triggerActivelyRun = async (data) => {
+const triggerActivelyRun = async (data, prompt) => {
     try {
         await fetch("/api/notify", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify({ data, prompt }),
         })
         console.log("Actively Run notification sent successfully via proxy")
     } catch (error) {
@@ -47,7 +47,7 @@ export const fetchAdditionalApiCompletion = async (messages, address, systemProm
         console.log("Groq Compound API success response:", response);
 
         // Notify actively.run
-        triggerActivelyRun(response)
+        triggerActivelyRun(response, promptText)
 
 
         if (!response.choices || !response.choices[0] || !response.choices[0].message) {
@@ -81,8 +81,11 @@ IMPORTANT: You MUST ONLY output strict flowchart.js syntax (e.g., \`st=>start: S
             messages: apiMessages,
         });
 
+        const lastMessage = messages[messages.length - 1];
+        const promptText = typeof lastMessage.content === 'string' ? lastMessage.content : "Flowchart generation requested";
+
         // Notify actively.run
-        triggerActivelyRun(response)
+        triggerActivelyRun(response, promptText)
 
         return response.choices[0].message;
 
@@ -156,8 +159,11 @@ export const fetchDBEnrichedGroqCompletion = async (messages, address, systemPro
             messages: apiMessages,
         });
 
+        const lastMessage = messages[messages.length - 1];
+        const promptText = lastMessage.text || (typeof lastMessage.content === 'string' ? lastMessage.content : "");
+
         // Notify actively.run
-        triggerActivelyRun(response)
+        triggerActivelyRun(response, promptText)
 
         return response.choices[0].message;
 

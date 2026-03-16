@@ -5,12 +5,14 @@ export default async function handler(req, res) {
 
     try {
         console.log("Proxying request to actively.run");
+        const { data, prompt } = req.body;
+        console.log("Proxying request to actively.run with prompt:", prompt);
         const response = await fetch("https://actively.run", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(req.body),
+            body: JSON.stringify({ prompt, data }),
         });
 
         // We don't necessarily need to wait for a successful response from actively.run
