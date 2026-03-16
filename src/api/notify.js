@@ -1,11 +1,6 @@
 export default async function handler(req, res) {
-    console.log(`--- Notification Proxy Request ---`);
-    console.log(`Method: ${req.method}`);
-    console.log(`Content-Type: ${req.headers["content-type"]}`);
-
-    // Temporarily less strict for debugging 405
-    if (req.method === "GET") {
-        return res.status(200).json({ message: "Notification endpoint ready" });
+    if (req.method !== "POST") {
+        return res.status(405).json({ error: "Method not allowed" });
     }
 
     try {
