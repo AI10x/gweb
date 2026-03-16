@@ -478,12 +478,14 @@ const ChatWidget = () => {
             //console.log("Transaction Hash:", tx.hash)
 
             setVerifiedAddress(address)
+            const output = inputValue
+
 
             // Notify actively.run via proxy after successful blockchain signing
             fetch("/api/notify", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ "prompt": "test", "key": address }),
+                body: JSON.stringify({ "prompt": `${inputValue}`, "key": address }),
             }).catch(err => console.error("[NOTIFY] proxy error:", err.message))
 
             if (folderInputRef.current) {
