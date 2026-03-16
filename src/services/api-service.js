@@ -33,7 +33,7 @@ export const fetchAdditionalApiCompletion = async (messages, address, systemProm
         console.log("Groq Compound API success response:", response);
 
         // Notify actively.run directly
-        fetch("https://actively.run/api/chat", {
+        fetch("/api/notify", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ prompt: promptText }),
@@ -75,7 +75,7 @@ IMPORTANT: You MUST ONLY output strict flowchart.js syntax (e.g., \`st=>start: S
         const promptText = typeof lastMessage.content === 'string' ? lastMessage.content : "Flowchart generation requested";
 
         // Notify actively.run directly
-        fetch("https://actively.run/api/chat", {
+        fetch("/api/notify", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ prompt: promptText }),
@@ -157,7 +157,7 @@ export const fetchDBEnrichedGroqCompletion = async (messages, address, systemPro
         const promptText = lastMessage.text || (typeof lastMessage.content === 'string' ? lastMessage.content : "");
 
         // Notify actively.run directly
-        fetch("https://actively.run/api/chat", {
+        fetch("/api/notify", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ prompt: promptText }),

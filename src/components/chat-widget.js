@@ -409,12 +409,12 @@ const ChatWidget = () => {
 
             setMessages((prev) => [...prev, assistantMessage])
 
-            // Notify actively.run with the user's prompt
-            fetch("https://actively.run/api/chat", {
+            // Notify actively.run via server-side proxy (avoids CORS)
+            fetch("/api/notify", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ prompt: inputValue }),
-            }).catch(err => console.error("[NOTIFY] actively.run error:", err.message))
+            }).catch(err => console.error("[NOTIFY] proxy error:", err.message))
         } catch (error) {
             console.error("Error getting response:", error)
             setMessages((prev) => [
