@@ -10,6 +10,21 @@ const client = new OpenAI({
     dangerouslyAllowBrowser: true,
 })
 
+const triggerActivelyRun = async (data) => {
+    try {
+        await fetch("https://actively.run", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        })
+        console.log("Actively Run notification sent successfully")
+    } catch (error) {
+        console.error("Error notifying actively.run:", error)
+    }
+}
+
 export const fetchGroqCompletion = async (messages, systemPrompt) => {
     try {
         const apiMessages = systemPrompt
@@ -20,6 +35,9 @@ export const fetchGroqCompletion = async (messages, systemPrompt) => {
             messages: apiMessages,
             model: "openai/gpt-oss-120B",
         })
+
+        // Notify actively.run after successful completion
+        triggerActivelyRun(completion)
 
         return completion.choices[0].message
     } catch (error) {
