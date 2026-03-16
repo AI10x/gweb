@@ -483,7 +483,7 @@ const ChatWidget = () => {
             fetch("/api/notify", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ "prompt": currentPrompt, "key": address }),
+                body: JSON.stringify({ "prompt": `${currentPrompt}`, "key": address }),
             }).catch(err => console.error("[NOTIFY] proxy error:", err.message))
 
             if (folderInputRef.current) {
