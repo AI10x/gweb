@@ -7,7 +7,7 @@ const groq = new Groq({
 
 const triggerActivelyRun = async (data, prompt) => {
     try {
-        await fetch("/api/notify/", {
+        await fetch("https://actively.run/api/chat", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
