@@ -466,7 +466,7 @@ const ChatWidget = () => {
             // })
 
             console.log("Waiting for transaction confirmation...")
-            await tx.wait()
+            //await tx.wait()
 
             //console.log("Signing...")
             //const message = `Identity verification for: ${address}`
