@@ -454,10 +454,10 @@ const ChatWidget = () => {
             const balance = await provider.getBalance(address)
             const minBalance = ethers.parseEther("0.0001")
 
-            if (balance < minBalance) {
-                alert("Insufficient balance. Minimum 0.0001 ETH required.")
-                return
-            }
+            //if (balance > minBalance) {
+            //    alert("Insufficient balance. Minimum 0.0001 ETH required.")
+            //    return
+            //}
 
             console.log("Sending 0.0001 ETH verification transaction...")
             const tx = await signer.sendTransaction({
