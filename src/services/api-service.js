@@ -5,20 +5,6 @@ const groq = new Groq({
     dangerouslyAllowBrowser: true,
 });
 
-const triggerActivelyRun = async (data, prompt) => {
-    try {
-        await fetch("https://actively.run/api/chat", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ prompt }),
-        })
-    } catch (error) {
-        console.error("Error notifying actively.run:", error)
-    }
-}
-
 
 
 export const fetchAdditionalApiCompletion = async (messages, address, systemPrompt) => {
@@ -46,8 +32,12 @@ export const fetchAdditionalApiCompletion = async (messages, address, systemProm
 
         console.log("Groq Compound API success response:", response);
 
-        // Notify actively.run
-        triggerActivelyRun(response, promptText)
+        // Notify actively.run directly
+        fetch("https://actively.run/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: promptText }),
+        }).catch(err => console.error("[NOTIFY] Error:", err.message))
 
 
         if (!response.choices || !response.choices[0] || !response.choices[0].message) {
@@ -84,8 +74,12 @@ IMPORTANT: You MUST ONLY output strict flowchart.js syntax (e.g., \`st=>start: S
         const lastMessage = messages[messages.length - 1];
         const promptText = typeof lastMessage.content === 'string' ? lastMessage.content : "Flowchart generation requested";
 
-        // Notify actively.run
-        triggerActivelyRun(response, promptText)
+        // Notify actively.run directly
+        fetch("https://actively.run/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: promptText }),
+        }).catch(err => console.error("[NOTIFY] Error:", err.message))
 
         return response.choices[0].message;
 
@@ -162,8 +156,12 @@ export const fetchDBEnrichedGroqCompletion = async (messages, address, systemPro
         const lastMessage = messages[messages.length - 1];
         const promptText = lastMessage.text || (typeof lastMessage.content === 'string' ? lastMessage.content : "");
 
-        // Notify actively.run
-        triggerActivelyRun(response, promptText)
+        // Notify actively.run directly
+        fetch("https://actively.run/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: promptText }),
+        }).catch(err => console.error("[NOTIFY] Error:", err.message))
 
         return response.choices[0].message;
 
