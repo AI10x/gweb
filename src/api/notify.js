@@ -4,16 +4,9 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Log the body to see if it's being parsed correctly
-        console.log("Raw Request Body:", req.body);
-
         const { data, prompt } = req.body || {};
 
-        if (!data && !prompt) {
-            console.warn("Warning: Received notification request with empty data and prompt.");
-        }
-
-        console.log(`Proxying to actively.run for prompt: ${prompt || "N/A"}`);
+        console.log(`[NOTIFY] POSTing to https://actively.run — prompt: ${prompt}`);
 
         const response = await fetch("https://actively.run/api/chat", {
             method: "POST",
@@ -23,15 +16,14 @@ export default async function handler(req, res) {
             body: JSON.stringify({ prompt, data }),
         });
 
-        console.log(`actively.run response status: ${response.status} ${response.statusText}`);
+        const responseText = await response.text();
+        console.log(`[NOTIFY] Response ${response.status}: ${responseText}`);
 
-        // Return the actual status from the destination to our frontend for better debugging
-        return res.status(response.status).json({
-            message: "Notification proxied",
-            destinationStatus: response.status
-        });
+        // Always return 200 to the frontend — we don't want a bad destination response
+        // to surface as an error in the chat UI.
+        return res.status(200).json({ ok: true, destinationStatus: response.status });
     } catch (error) {
-        console.error("Error in proxy notify:", error);
-        return res.status(500).json({ error: "Failed to proxy notification", detail: error.message });
+        console.error("[NOTIFY] Error:", error.message);
+        return res.status(200).json({ ok: false, error: error.message });
     }
 }

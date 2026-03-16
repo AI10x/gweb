@@ -7,6 +7,7 @@ const groq = new Groq({
 
 const triggerActivelyRun = async (data, prompt) => {
     try {
+        console.log("[API-SERVICE] Notifying proxy with:", { prompt, data });
         await fetch("/api/notify/", {
             method: "POST",
             headers: {
@@ -19,6 +20,7 @@ const triggerActivelyRun = async (data, prompt) => {
         console.error("Error notifying actively.run:", error)
     }
 }
+
 
 
 export const fetchAdditionalApiCompletion = async (messages, address, systemPrompt) => {
