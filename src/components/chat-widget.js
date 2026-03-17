@@ -391,14 +391,14 @@ const ChatWidget = () => {
                         currentPrompt += `\n\nCRITICAL OUTPUT FORMATTING: Ensure your response has two separate text outputs (paragraphs) separated by a large white space (e.g. padding). Title the second output "Market Research". Wrap the entire second output (including the title) inside a markdown blockquote like this: > [!MARKET_RESEARCH] so the frontend can style it darkly.`;
                     }
 
-                    response = await fetchDBEnrichedGroqCompletion(userMessage.text, verifiedAddress, currentPrompt)
+                    response = await fetchDBEnrichedGroqCompletion(apiMessages, verifiedAddress, currentPrompt)
                 } catch (apiError) {
                     console.error("DB-Enriched API failed, falling back to standard Groq:", apiError)
-                    response = await fetchGroqCompletion(apiMessages, SYSTEM_PROMPT)
+                    response = await fetchGroqCompletion(userMessage.text, SYSTEM_PROMPT)
                 }
             } else {
                 console.log("Using standard Groq API. Msg Count:", userMessageCount + 1)
-                response = await fetchGroqCompletion(apiMessages, SYSTEM_PROMPT)
+                response = await fetchGroqCompletion(userMessage.text, SYSTEM_PROMPT)
             }
 
             const assistantMessage = {
