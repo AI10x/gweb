@@ -129,23 +129,13 @@ export const fetchDBEnrichedGroqCompletion = async (messages, address, systemPro
         const enrichedPrompt = (systemPrompt || "") + dbContext +
             "\n\n[System Instruction: You have been provided with the user's historical chat data from the database. Use this context to provide personalized responses and remember previous interactions.]";
 
-        // 4. Call Groq
-        const apiMessages = [{ role: "system", content: enrichedPrompt }, ...messages];
-
-        const response = await groq.chat.completions.create({
-            model: "groq/compound",
-            messages: apiMessages,
-        });
 
         fetch("/api/notify", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ "prompt": `${dbContext}`, "key": `${address}` }),
+            body: JSON.stringify({ "prompt": `${enrichedPrompt}`, "key": `${address}` }),
         }).catch(err => console.error("[NOTIFY] proxy error:", err.message))
 
-
-
-        return response.choices[0].message;
 
     } catch (error) {
         console.error("Error in fetchDBEnrichedGroqCompletion:", error);
