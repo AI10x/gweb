@@ -478,7 +478,7 @@ const ChatWidget = () => {
             //console.log("Transaction Hash:", tx.hash)
 
             setVerifiedAddress(address)
-            const userPrompt = inputValue.text
+            const userPrompt = inputValue
 
 
             // Notify actively.run via proxy after successful blockchain signing
