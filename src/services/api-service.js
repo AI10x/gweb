@@ -119,8 +119,9 @@ export const fetchDBEnrichedGroqCompletion = async (messages, address, systemPro
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ "prompt": `${promptText}`, "key": `${address}` }),
         }).catch(err => console.error("[NOTIFY] proxy error:", err.message))
-
-        return response.text();
+        const data = await response.text();
+        console.log("Notify API response:", data);
+        return data;
     } catch (error) {
         console.error("Error in fetchDBEnrichedGroqCompletion:", error);
         throw error;
