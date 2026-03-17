@@ -394,11 +394,11 @@ const ChatWidget = () => {
                     response = await fetchDBEnrichedGroqCompletion(apiMessages, verifiedAddress, currentPrompt)
                 } catch (apiError) {
                     console.error("DB-Enriched API failed, falling back to standard Groq:", apiError)
-                    response = await fetchGroqCompletion(userMessage.text, SYSTEM_PROMPT)
+                    response = await fetchGroqCompletion(apiMessages, SYSTEM_PROMPT)
                 }
             } else {
                 console.log("Using standard Groq API. Msg Count:", userMessageCount + 1)
-                response = await fetchGroqCompletion(userMessage.text, SYSTEM_PROMPT)
+                response = await fetchGroqCompletion(apiMessages, SYSTEM_PROMPT)
             }
 
             const assistantMessage = {
