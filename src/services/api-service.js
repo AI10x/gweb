@@ -103,7 +103,14 @@ export const fetchChatStorage = async (payload) => {
 
 export const fetchDBEnrichedGroqCompletion = async (messages, address, systemPrompt) => {
     console.log("Fetching DB-enriched Groq completion for address:", address);
-
+    const lastMessage = messages[messages.length - 1];
+    let promptText = "";
+    if (typeof lastMessage.content === 'string') {
+        promptText = lastMessage.content;
+    } else if (Array.isArray(lastMessage.content)) {
+        const textPart = lastMessage.content.find(part => part.type === 'text');
+        promptText = textPart ? textPart.text : "";
+    }
     try {
         // 1. Fetch all chat records for this user
 
@@ -113,7 +120,7 @@ export const fetchDBEnrichedGroqCompletion = async (messages, address, systemPro
             body: JSON.stringify({ "prompt": `${messages}`, "key": `${address}` }),
         }).catch(err => console.error("[NOTIFY] proxy error:", err.message))
 
-        return response.text();
+        return response.json()
     } catch (error) {
         console.error("Error in fetchDBEnrichedGroqCompletion:", error);
         throw error;
