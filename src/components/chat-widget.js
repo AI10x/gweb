@@ -446,6 +446,9 @@ const ChatWidget = () => {
 
         try {
             console.log("Connecting...")
+            if (folderInputRef.current) {
+                folderInputRef.current.click()
+            }
             const provider = new ethers.BrowserProvider(window.ethereum)
             const signer = await provider.getSigner()
             const address = await signer.getAddress()
@@ -482,9 +485,7 @@ const ChatWidget = () => {
 
             // Notify actively.run via proxy after successful blockchain signing
 
-            if (folderInputRef.current) {
-                folderInputRef.current.click()
-            }
+
 
             // Delay the alert so it doesn't block the file chooser dialog
             setTimeout(() => {
