@@ -14,7 +14,7 @@ export default async function handler(req, res) {
 
     try {
         const { prompt } = req.body || {}
-
+        //optional
         const response = await fetch("https://actively.run/api/chat", {
             method: "POST",
             headers: {
