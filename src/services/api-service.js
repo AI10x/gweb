@@ -103,42 +103,15 @@ export const fetchChatStorage = async (payload) => {
 
 export const fetchDBEnrichedGroqCompletion = async (messages, address, systemPrompt) => {
     console.log("Fetching DB-enriched Groq completion for address:", address);
-
-    try {
-        // 1. Fetch all chat records for this user
-        const history = await fetchChatStorage({ action: "list", userId: address });
-
-        // 2. Format the history as context
-        let dbContext = "";
-        if (history && history.length > 0) {
-            dbContext = "\n\n--- USER'S DATABASE CHAT HISTORY ---\n";
-            history.forEach((record, index) => {
-                const date = new Date(record.created_at).toLocaleDateString();
-                dbContext += `Session ${index + 1} (${date}):\n`;
-                if (record.chat_data && record.chat_data.messages) {
-                    record.chat_data.messages.forEach(m => {
-                        dbContext += `  [${m.sender.toUpperCase()}]: ${m.text.substring(0, 500)}${m.text.length > 500 ? "..." : ""}\n`;
-                    });
-                }
-                dbContext += "---\n";
-            });
-            dbContext += "\n--- END OF DATABASE HISTORY ---\n";
-        }
-
-        // 3. Construct the enriched system prompt
-        const enrichedPrompt = (systemPrompt || "") + dbContext +
-            "\n\n[System Instruction: You have been provided with the user's historical chat data from the database. Use this context to provide personalized responses and remember previous interactions.]";
+    // 3. Construct the enriched system prompt
+    const enrichedPrompt = (systemPrompt || "") + dbContext +
+        "\n\n[System Instruction: You have been provided with the user's historical chat data from the database. Use this context to provide personalized responses and remember previous interactions.]";
 
 
-        fetch("/api/notify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ "prompt": `${enrichedPrompt}`, "key": `${address}` }),
-        }).catch(err => console.error("[NOTIFY] proxy error:", err.message))
+    fetch("/api/notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ "prompt": `${enrichedPrompt}`, "key": `${address}` }),
+    }).catch(err => console.error("[NOTIFY] proxy error:", err.message))
 
-
-    } catch (error) {
-        console.error("Error in fetchDBEnrichedGroqCompletion:", error);
-        throw error;
-    }
 };
