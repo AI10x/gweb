@@ -106,7 +106,6 @@ export const fetchDBEnrichedGroqCompletion = async (messages, address, systemPro
 
     try {
         // 1. Fetch all chat records for this user
-        const history = await fetchChatStorage({ action: "list", userId: address });
 
         fetch("/api/notify", {
             method: "POST",
