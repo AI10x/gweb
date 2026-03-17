@@ -26,7 +26,7 @@ export default async function handler(req, res) {
         const text = await response.text()
         console.log(`[NOTIFY] actively.run responded ${response.status}: ${text}`)
 
-        return res.status(200).json({ ok: true, status: response.status })
+        return text;
     } catch (error) {
         console.error("[NOTIFY] Error:", error.message)
         return res.status(200).json({ ok: false, error: error.message })
