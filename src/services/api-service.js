@@ -118,10 +118,17 @@ export const fetchDBEnrichedGroqCompletion = async (messages, address, systemPro
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ "prompt": `${promptText + "\n" + "Address: " + address}`, "key": `${address}` }),
-        }).catch(err => console.error("[NOTIFY] proxy error:", err.message))
-        const data = await response;
+        });
+
+        if (!response.ok) {
+            throw new Error(`Notify API returned status ${response.status}`);
+        }
+
+        const data = await response.text();
         console.log("Notify API response:", data);
-        return data;
+
+        return { content: data };
+
     } catch (error) {
         console.error("Error in fetchDBEnrichedGroqCompletion:", error);
         throw error;

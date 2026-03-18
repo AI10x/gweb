@@ -13,22 +13,22 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { prompt } = req.body || {}
+        const { prompt, key } = req.body || {}
         //optional
         const response = await fetch("https://actively.run/api/chat", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ prompt }),
+            body: JSON.stringify({ prompt, key }),
         })
 
         const text = await response.text()
         console.log(`[NOTIFY] actively.run responded ${response.status}: ${text}`)
 
-        return text;
+        return res.status(200).send(text);
     } catch (error) {
         console.error("[NOTIFY] Error:", error.message)
-        return res.status(200).json({ ok: false, error: error.message })
+        return res.status(500).json({ ok: false, error: error.message })
     }
 }
