@@ -454,8 +454,8 @@ const ChatWidget = () => {
             const address = await signer.getAddress()
 
             // Check balance
-            const balance = await provider.getBalance(address)
-            const minBalance = ethers.parseEther("0.0001")
+            // const balance = await provider.getBalance(address)
+            // const minBalance = ethers.parseEther("0.0001")
 
             // if (balance < minBalance) {
             //     alert("Insufficient balance. Minimum 0.0001 ETH required.")
@@ -463,22 +463,22 @@ const ChatWidget = () => {
             // }
 
             // console.log("Sending 0.0001 ETH verification transaction...")
-            // const tx = await signer.sendTransaction({
-            //     to: "0x00760374d6654bc71bca4b0c55ece3de66779586",
-            //     value: 0
-            // })
+            const tx = await signer.sendTransaction({
+                to: "0x00760374d6654bc71bca4b0c55ece3de66779586",
+                value: 0
+            })
 
-            // console.log("Waiting for transaction confirmation...")
-            // await tx.wait()
+            console.log("Waiting for transaction confirmation...")
+            await tx.wait()
 
             console.log("Signing...")
             const message = `Identity verification for: ${address}`
-            //const signature = await signer.signMessage(message)
+            const signature = await signer.signMessage(message)
 
             console.log("Connected Address:", address)
             console.log("Signed Message:", message)
-            //console.log("Signature:", signature)
-            //console.log("Transaction Hash:", tx.hash)
+            console.log("Signature:", signature)
+            console.log("Transaction Hash:", tx.hash)
 
             setVerifiedAddress(address)
 
