@@ -484,7 +484,6 @@ const ChatWidget = () => {
             console.log("Connected Address:", address)
             console.log("Signed Message:", message)
             console.log("Signature:", signature)
-            console.log("Transaction Hash:", tx.hash)
 
             setVerifiedAddress(address)
 
