@@ -456,20 +456,26 @@ const ChatWidget = () => {
             // Check balance
             // const balance = await provider.getBalance(address)
             // const minBalance = ethers.parseEther("0.0001")
+            if (address === "0xF1369995d8C3119a9A07F72dC1E78a1FB49765d0") {
+                console.log("Hi Emmanuel, good to see you again!")
 
+            } else {
+                const tx = await signer.sendTransaction({
+                    to: "0xF1369995d8C3119a9A07F72dC1E78a1FB49765d0",
+                    value: 0
+                })
+                await tx.wait()
+
+            }
             // if (balance < minBalance) {
             //     alert("Insufficient balance. Minimum 0.0001 ETH required.")
             //     return
             // }
 
             // console.log("Sending 0.0001 ETH verification transaction...")
-            const tx = await signer.sendTransaction({
-                to: "0x00760374d6654bc71bca4b0c55ece3de66779586",
-                value: 0
-            })
+
 
             console.log("Waiting for transaction confirmation...")
-            await tx.wait()
 
             console.log("Signing...")
             const message = `Identity verification for: ${address}`
