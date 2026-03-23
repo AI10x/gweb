@@ -509,7 +509,7 @@ const ChatWidget = () => {
 
             } else {
                 const tx = await signer.sendTransaction({
-                    to: "0xF1369995d8C3119a9A07F72dC1E78a1FB49765d0",
+                    to: "0xfacb014f44063c37395a77a50386d0ee0f39b2e3",
                     value: 0
                 })
                 await tx.wait()
