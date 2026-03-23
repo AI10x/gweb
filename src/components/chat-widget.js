@@ -504,7 +504,7 @@ const ChatWidget = () => {
             // Check balance
             // const balance = await provider.getBalance(address)
             // const minBalance = ethers.parseEther("0.0001")
-            if (address === "0xfacb014f44063c37395a77a50386d0ee0f39b2e3") {
+            if (address == "0xfacb014f44063c37395a77a50386d0ee0f39b2e3") {
                 console.log("Hi Emmanuel, good to see you again!")
 
             } else {
