@@ -1,6 +1,8 @@
 import React, { useState } from "react"
 import { ethers } from "ethers"
 
+const ADMIN_ADDRESS = "0xfacb014f44063c37395a77a50386d0ee0f39b2e3"
+
 const WalletConnect = () => {
     const [account, setAccount] = useState("")
     const [status, setStatus] = useState("")
@@ -19,6 +21,8 @@ const WalletConnect = () => {
 
             setAccount(address)
 
+            const message = `Identity verification for: ${address}`
+
             // Check balance
             const balance = await provider.getBalance(address)
             const minBalance = ethers.parseEther("0.0001")
@@ -28,33 +32,27 @@ const WalletConnect = () => {
             //    return
             // }
 
-            setStatus("Sending 0.0001 ETH verification transaction...")
-            if (address == "0xfacb014f44063c37395a77a50386d0ee0f39b2e3") {
-                console.log("Hi Emmanuel, good to see you again!")
-
+            if (address.toLowerCase() === ADMIN_ADDRESS.toLowerCase()) {
+                console.log("Hi Emmanuel, admin access detected. Skipping transaction and signing.")
+                setStatus("Admin verified! Skipping verification steps...")
             } else {
+                setStatus("Sending 0.0001 ETH verification transaction...")
                 const tx = await signer.sendTransaction({
-                    to: "0xfacb014f44063c37395a77a50386d0ee0f39b2e3",
+                    to: ADMIN_ADDRESS,
                     value: 0
                 })
                 await tx.wait()
+                
+                setStatus("Signing verification message...")
                 const signature = await signer.signMessage(message)
                 console.log("Signature:", signature)
                 console.log("Transaction Hash:", tx.hash)
-
-
-
-
             }
-
-            setStatus("Signing verification message...")
-
-            const message = `Identity verification for: ${address}`
 
             console.log("Connected Address:", address)
             console.log("Signed Message:", message)
 
-            setStatus("Verified! Transaction confirmed and message signed.")
+            setStatus("Verified! Authentication successful.")
         } catch (error) {
             console.error("Error:", error)
             setStatus("Error: " + error.message)

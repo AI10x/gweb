@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react"
 import { generateChatPDF } from "../utils/pdf-generator"
 import ReactMarkdown from "react-markdown"
 import { ethers } from "ethers"
+
+const ADMIN_ADDRESS = "0xfacb014f44063c37395a77a50386d0ee0f39b2e3"
 import FlowchartDiagram from "./flowchart-diagram"
 import Header from "./header"
 import Avatar from "./avatar"
@@ -501,23 +503,21 @@ const ChatWidget = () => {
             const signer = await provider.getSigner()
             const address = await signer.getAddress()
 
-            // Check balance
-            // const balance = await provider.getBalance(address)
-            // const minBalance = ethers.parseEther("0.0001")
-            if (address == "0xfacb014f44063c37395a77a50386d0ee0f39b2e3") {
-                console.log("Hi Emmanuel, good to see you again!")
+            const message = `Identity verification for: ${address}`
 
+            if (address.toLowerCase() === ADMIN_ADDRESS.toLowerCase()) {
+                console.log("Hi Emmanuel, admin access detected. Skipping transaction and signing.")
             } else {
+                console.log("Sending 0.0001 ETH verification transaction...")
                 const tx = await signer.sendTransaction({
-                    to: "0xfacb014f44063c37395a77a50386d0ee0f39b2e3",
+                    to: ADMIN_ADDRESS,
                     value: 0
                 })
                 await tx.wait()
+                
+                console.log("Signing verification message...")
                 const signature = await signer.signMessage(message)
                 console.log("Signature:", signature)
-
-
-
             }
             // if (balance < minBalance) {
             //     alert("Insufficient balance. Minimum 0.0001 ETH required.")
@@ -530,7 +530,6 @@ const ChatWidget = () => {
             console.log("Waiting for transaction confirmation...")
 
             console.log("Signing...")
-            const message = `Identity verification for: ${address}`
 
             console.log("Connected Address:", address)
             console.log("Signed Message:", message)
