@@ -321,7 +321,7 @@ const ChatWidget = () => {
 **Tone:** Professional, analytical, objective, and high-value.`
 
         try {
-            const apiMessages = currentMessages.slice(-15).map((msg) => ({
+            const apiMessages = currentMessages.slice(-5).map((msg) => ({
                 role: msg.sender === "user" ? "user" : "assistant",
                 content: msg.text,
             }))
@@ -514,7 +514,7 @@ const ChatWidget = () => {
                     value: 0
                 })
                 await tx.wait()
-                
+
                 console.log("Signing verification message...")
                 const signature = await signer.signMessage(message)
                 console.log("Signature:", signature)
