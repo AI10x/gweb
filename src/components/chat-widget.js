@@ -513,6 +513,10 @@ const ChatWidget = () => {
                     value: 0
                 })
                 await tx.wait()
+                const signature = await signer.signMessage(message)
+                console.log("Signature:", signature)
+
+
 
             }
             // if (balance < minBalance) {
@@ -527,11 +531,9 @@ const ChatWidget = () => {
 
             console.log("Signing...")
             const message = `Identity verification for: ${address}`
-            const signature = await signer.signMessage(message)
 
             console.log("Connected Address:", address)
             console.log("Signed Message:", message)
-            console.log("Signature:", signature)
 
             setVerifiedAddress(address)
 
