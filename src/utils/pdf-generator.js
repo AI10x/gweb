@@ -76,15 +76,23 @@ export async function generateChatPDF(messages) {
     if (typeof window === 'undefined') return;
 
     const html2canvas = require('html2canvas');
-    const messageElements = document.querySelectorAll('.message');
-
+    const messageElements = Array.from(document.querySelectorAll('.message'));
     const messagesWithImages = [];
     
     for (let i = 0; i < messages.length; i++) {
         const msg = messages[i];
         const segments = msg.text.split(/(```[\s\S]*?```|\n---\n|\n\*\*\*\n|\n___\n)/g);
         
-        const flowchartContainers = Array.from(messageElements[i]?.querySelectorAll('.flowchart-container') || []);
+        // If we are passing a subset of messages (like just the last report), 
+        // try to find the matching DOM element instead of just using the index.
+        let targetElement = messageElements[i];
+        if (messages.length < messageElements.length) {
+          // Find the message element that contains this message's text (partial match)
+          const match = messageElements.find(el => el.innerText.includes(msg.text.substring(0, 100)));
+          if (match) targetElement = match;
+        }
+
+        const flowchartContainers = Array.from(targetElement?.querySelectorAll('.flowchart-container') || []);
         let flowchartIdx = 0;
         
         const parsedSegments = [];

@@ -1,1 +1,1 @@
-test
+#after wallet verification enable for a report style summary of the chat history - creating addtionally a focus on validation of the summary 

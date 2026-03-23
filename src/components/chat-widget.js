@@ -302,6 +302,54 @@ const ChatWidget = () => {
         setAttachments(prev => prev.filter(att => att.id !== id))
     }
 
+    const generateReportSummary = async (currentMessages, address) => {
+        setIsLoading(true)
+        const REPORT_SYSTEM_PROMPT = `
+**Role:** You are a Senior Venture Capital Analyst and Lean Startup Strategist.
+**Context:** The user has just completed wallet verification. As a premium feature, you are providing a formal "Market Validation Report" based on the conversation history.
+
+**Objective:** Summarize the business model elements discussed and provide a critical validation of the market assumptions.
+
+**Structure the report as follows:**
+1. **Executive Summary:** A high-level overview of the venture.
+2. **Problem & Solution Validation:** Critical analysis of how well the proposed solution addresses the identified pain points.
+3. **Market Insight & Validation:** Deep dive into the market assumptions, customer segments, and potential market fit.
+4. **Strategic Recommendations:** Concrete next steps for de-risking the project.
+
+**Tone:** Professional, analytical, objective, and high-value.`
+
+        try {
+            const apiMessages = currentMessages.slice(-15).map((msg) => ({
+                role: msg.sender === "user" ? "user" : "assistant",
+                content: msg.text,
+            }))
+
+            apiMessages.push({
+                role: "user",
+                content: "Please generate my Market Validation Report now based on our entire discussion."
+            })
+
+            const response = await fetchDBEnrichedGroqCompletion(apiMessages, address, REPORT_SYSTEM_PROMPT)
+
+            const assistantMessage = {
+                id: Date.now() + 5,
+                text: response.content,
+                sender: "support",
+            }
+
+            setMessages((prev) => [...prev, assistantMessage])
+
+            // Trigger PDF download of JUST the report, as requested
+            setTimeout(async () => {
+                await generateChatPDF([assistantMessage])
+            }, 1000) // Small delay to allow potential UI updates, though PDF is data-driven
+        } catch (error) {
+            console.error("Error generating report summary:", error)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
     const handleSend = async (e) => {
         e.preventDefault()
         if (!inputValue.trim() && attachments.length === 0) return
@@ -487,6 +535,8 @@ const ChatWidget = () => {
 
             setVerifiedAddress(address)
 
+            // Trigger the report summary generation immediately after verification
+            await generateReportSummary(messages, address)
 
             // Notify actively.run via proxy after successful blockchain signing
 
