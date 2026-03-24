@@ -6,7 +6,7 @@ services:
     deploy_on_push: true
     repo: AI10x/gweb
   name: sample-gatsby
-  http_port: 8080
+  http_port: 80
   build_command: npm run build
   run_command: npm start
   envs:
