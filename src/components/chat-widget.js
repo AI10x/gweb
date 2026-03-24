@@ -492,6 +492,13 @@ const ChatWidget = () => {
             return
         }
 
+        // Detect if running in an iframe (which wallets often block for security)
+        if (window.self !== window.top) {
+            const walletName = window.ethereum.isTrust ? "Trust Wallet" : "MetaMask";
+            alert(`${walletName} Error (dapp.frames-disallowed): Wallet connection is blocked when running inside an iframe. Please open the site directly in a new tab to connect your wallet.`);
+            return;
+        }
+
         if (isConnectingRef.current) return;
         isConnectingRef.current = true;
         setIsConnecting(true);
@@ -512,8 +519,9 @@ const ChatWidget = () => {
                 try {
                     await window.ethereum.request({ method: 'eth_requestAccounts' });
                 } catch (rpcError) {
+                    const walletName = window.ethereum.isTrust ? "Trust Wallet" : "MetaMask";
                     if (rpcError.code === -32603) {
-                        alert("Chrome/MetaMask Conflict: A connection request is already pending. \n\n1. Click the MetaMask fox icon in your extension bar.\n2. If no popup appears, refresh the page and try again.\n3. Verify that MetaMask is enabled for this site in Chrome settings.");
+                        alert(`${walletName} Conflict: A connection request is already pending. \n\n1. Click the ${walletName} icon in your extension bar.\n2. If no popup appears, refresh the page and try again.\n3. Verify that ${walletName} is enabled for this site in your browser settings.`);
                         setIsConnecting(false);
                         isConnectingRef.current = false;
                         return;

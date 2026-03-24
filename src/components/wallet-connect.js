@@ -15,6 +15,14 @@ const WalletConnect = () => {
             return
         }
 
+        // Detect iframe connection blocks
+        if (window.self !== window.top) {
+            const walletName = window.ethereum?.isTrust ? "Trust Wallet" : "Wallet";
+            setStatus(`${walletName}/Iframe Error: Connection blocked in frames. Please open in a new tab.`)
+            alert(`${walletName} Error (dapp.frames-disallowed): Wallet connection is blocked when running inside an iframe. Please open the site directly in a new tab to connect your wallet.`);
+            return;
+        }
+
         if (isConnectingRef.current) return
         isConnectingRef.current = true
         setIsConnecting(true)
