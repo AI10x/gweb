@@ -1,9 +1,10 @@
-import React, { useState } from "react"
+import React, { useState, useRef } from "react"
 import { ethers } from "ethers"
 
 const ADMIN_ADDRESS = "0xfacb014f44063c37395a77a50386d0ee0f39b2e3"
 
 const WalletConnect = () => {
+    const isConnectingRef = useRef(false)
     const [isConnecting, setIsConnecting] = useState(false)
     const [account, setAccount] = useState("")
     const [status, setStatus] = useState("")
@@ -14,7 +15,8 @@ const WalletConnect = () => {
             return
         }
 
-        if (isConnecting) return
+        if (isConnectingRef.current) return
+        isConnectingRef.current = true
         setIsConnecting(true)
 
         try {
@@ -29,8 +31,9 @@ const WalletConnect = () => {
                     await window.ethereum.request({ method: "eth_requestAccounts" })
                 } catch (rpcError) {
                     if (rpcError.code === -32603) {
-                        setStatus("Error: A connection request is already pending in MetaMask. Please check your extension.")
+                        setStatus("Error: A connection request is already pending. Please check the MetaMask icon in your browser.")
                         setIsConnecting(false)
+                        isConnectingRef.current = false
                         return
                     }
                     throw rpcError
@@ -71,6 +74,7 @@ const WalletConnect = () => {
             setStatus("Error: " + error.message)
         } finally {
             setIsConnecting(false)
+            isConnectingRef.current = false
         }
     }
 

@@ -119,6 +119,7 @@ const ChatWidget = () => {
     const [userMessageCount, setUserMessageCount] = useState(0)
     const [showArrow, setShowArrow] = useState(true)
     const [dbRecordId, setDbRecordId] = useState(null)
+    const isConnectingRef = useRef(false)
     const resizeRef = useRef(null)
     const messagesEndRef = useRef(null)
 
@@ -491,14 +492,20 @@ const ChatWidget = () => {
             return
         }
 
-        if (isConnecting) return;
+        if (isConnectingRef.current) return;
+        isConnectingRef.current = true;
         setIsConnecting(true);
 
         try {
             console.log("Connecting...")
             
             // 1. Check if already connected to avoid unnecessary requests
-            const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+            let accounts = []
+            try {
+                accounts = await window.ethereum.request({ method: 'eth_accounts' });
+            } catch (err) {
+                console.error("Initial connection check failed:", err)
+            }
             
             if (accounts.length === 0) {
                 // 2. Request accounts explicitly to handle potential -32603 errors (pending requests)
@@ -506,8 +513,9 @@ const ChatWidget = () => {
                     await window.ethereum.request({ method: 'eth_requestAccounts' });
                 } catch (rpcError) {
                     if (rpcError.code === -32603) {
-                        alert("A connection request is already pending in MetaMask. Please open the extension and approve the request to continue.");
+                        alert("Chrome/MetaMask Conflict: A connection request is already pending. \n\n1. Click the MetaMask fox icon in your extension bar.\n2. If no popup appears, refresh the page and try again.\n3. Verify that MetaMask is enabled for this site in Chrome settings.");
                         setIsConnecting(false);
+                        isConnectingRef.current = false;
                         return;
                     }
                     throw rpcError;
@@ -567,6 +575,7 @@ const ChatWidget = () => {
             alert("Error: " + error.message)
         } finally {
             setIsConnecting(false)
+            isConnectingRef.current = false
         }
     }
 
