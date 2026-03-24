@@ -341,10 +341,6 @@ const ChatWidget = () => {
 
             setMessages((prev) => [...prev, assistantMessage])
 
-            // Trigger PDF download of JUST the report, as requested
-            setTimeout(async () => {
-                await generateChatPDF([assistantMessage])
-            }, 1000) // Small delay to allow potential UI updates, though PDF is data-driven
         } catch (error) {
             console.error("Error generating report summary:", error)
         } finally {
