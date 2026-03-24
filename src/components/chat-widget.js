@@ -492,9 +492,18 @@ const ChatWidget = () => {
 
         try {
             console.log("Connecting...")
-            if (folderInputRef.current) {
-                folderInputRef.current.click()
+            
+            // Request accounts explicitly to handle potential -32603 errors (pending requests)
+            try {
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+            } catch (rpcError) {
+                if (rpcError.code === -32603) {
+                    alert("A connection request is already pending in your wallet. Please check MetaMask.");
+                    return;
+                }
+                throw rpcError;
             }
+
             const provider = new ethers.BrowserProvider(window.ethereum)
             const signer = await provider.getSigner()
             const address = await signer.getAddress()
